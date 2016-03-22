@@ -12,3 +12,6 @@ install:
 script:
   - bundle exec rspec
   - bundle exec rubocop
+addons:
+  code_climate:
+    repo_token: a3c63e92f72bd7328fde0e31a39a3bd4e3f5fdeb73b1608c8f5b138f79c3b70a
