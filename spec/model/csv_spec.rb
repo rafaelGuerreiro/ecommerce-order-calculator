@@ -12,9 +12,21 @@ describe Csv, :model do
       expect(csv.file_path).to eq('other file.csv')
     end
 
-    it 'allows relative file path no matter the extension' do
+    it 'allows relative file path no matter if there is extension or not' do
       csv = Csv.new('../folder/a.file.csv')
       expect(csv.file_path).to eq('../folder/a.file.csv')
+
+      csv = Csv.new('../folder/another.file')
+      expect(csv.file_path).to eq('../folder/another.file.csv')
+    end
+
+    it 'allows trailing spaces in the file path no matter ' \
+    'if there is extension or not' do
+      csv = Csv.new(' ../folder/a.file.csv   ')
+      expect(csv.file_path).to eq('../folder/a.file.csv')
+
+      csv = Csv.new(' ../folder/another.file   ')
+      expect(csv.file_path).to eq('../folder/another.file.csv')
     end
 
     it 'cannot modify the original string' do
@@ -23,6 +35,17 @@ describe Csv, :model do
 
       expect(file_path).to eq('the_file')
       expect(csv.file_path).to eq('the_file.csv')
+    end
+
+    it 'cannot have an empty or nil file path' do
+      expect { Csv.new nil }
+        .to raise_error(StandardError, 'File path is required')
+
+      expect { Csv.new '' }
+        .to raise_error(StandardError, 'File path is required')
+
+      expect { Csv.new '  ' }
+        .to raise_error(StandardError, 'File path is required')
     end
   end
 
