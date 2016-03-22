@@ -1,8 +1,3 @@
-require 'codeclimate-test-reporter'
-CodeClimate::TestReporter.start
-
-require_relative '../../app/model/csv.rb'
-
 describe Csv, :model do
   describe '.new' do
     it 'allows file path without extension' do
