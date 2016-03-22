@@ -1,4 +1,4 @@
-require_relative '../../app/csv.rb'
+require_relative '../../app/model/csv.rb'
 
 describe Csv, :model do
   describe '.new' do
@@ -29,9 +29,9 @@ describe Csv, :model do
   describe '#file_path' do
     it 'must be immutable' do
       csv = Csv.new('../folder/a.file.csv')
-      expect {
-        csv.file_path << 'teste'
-      }.to raise_error(RuntimeError, "can't modify frozen String")
+
+      expect { csv.file_path << 'teste' }
+        .to raise_error(RuntimeError, "can't modify frozen String")
     end
   end
 end
