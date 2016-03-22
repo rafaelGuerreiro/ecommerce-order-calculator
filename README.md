@@ -1,12 +1,12 @@
 #e-commerce order calculator
 
-##Important note: this software were built on ruby 2.2.3
+##Important note: this software is supposed to run on ruby >= 2.0.0
 
 ###Running
 
 In order to execute this software, you have to execute the following command:
 ```
-ruby app.rb first\_file.csv second\_file third\_file.csv
+ruby app.rb first_file.csv second_file third_file.csv
 ```
 
 ###Testing
