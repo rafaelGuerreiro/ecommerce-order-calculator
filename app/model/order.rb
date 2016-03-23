@@ -2,9 +2,7 @@ class Order
   attr_accessor :id, :coupon
 
   def initialize(id:, coupon:)
-    if id.nil? || price.nil?
-      return
-    end
+    return if id.nil? || price.nil?
 
     @id = id.freeze
     @coupon = coupon

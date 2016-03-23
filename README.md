@@ -5,7 +5,7 @@
 
 #e-commerce order calculator
 
-##Important note: this software is supposed to run on ruby >= 2.0.0
+##Important note: this software is supposed to run on ruby >= 2.1
 
 ###Running
 
