@@ -36,14 +36,9 @@ describe Csv, :model do
     end
 
     it 'cannot have an empty or nil file path' do
-      expect { Csv.new nil }
-        .to raise_error(StandardError, 'File path is required')
-
-      expect { Csv.new '' }
-        .to raise_error(StandardError, 'File path is required')
-
-      expect { Csv.new '  ' }
-        .to raise_error(StandardError, 'File path is required')
+      expect { Csv.new nil }.to_not raise_error
+      expect { Csv.new '' }.to_not raise_error
+      expect { Csv.new '  ' }.to_not raise_error
     end
   end
 
@@ -53,6 +48,48 @@ describe Csv, :model do
 
       expect { csv.file_path << 'teste' }
         .to raise_error(RuntimeError, "can't modify frozen String")
+    end
+  end
+
+  describe '#valid?' do
+    it 'returns true when the file path is present' do
+      csv = Csv.new(' ../folder/a.file.csv   ')
+      expect(csv.valid?).to be_truthy
+
+      csv = Csv.new(' ../folder/a.file   ')
+      expect(csv.valid?).to be_truthy
+    end
+
+    it 'returns false when the file path is not present' do
+      csv = Csv.new(nil)
+      expect(csv.valid?).to be_falsy
+
+      csv = Csv.new('')
+      expect(csv.valid?).to be_falsy
+
+      csv = Csv.new('    ')
+      expect(csv.valid?).to be_falsy
+    end
+  end
+
+  describe '#invalid?' do
+    it 'returns false when the file path is present' do
+      csv = Csv.new(' ../folder/a.file.csv   ')
+      expect(csv.invalid?).to be_falsy
+
+      csv = Csv.new(' ../folder/a.file   ')
+      expect(csv.invalid?).to be_falsy
+    end
+
+    it 'returns true when the file path is not present' do
+      csv = Csv.new(nil)
+      expect(csv.invalid?).to be_truthy
+
+      csv = Csv.new('')
+      expect(csv.invalid?).to be_truthy
+
+      csv = Csv.new('    ')
+      expect(csv.invalid?).to be_truthy
     end
   end
 end
