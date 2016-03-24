@@ -10,9 +10,7 @@ module CsvModel
       names.each do |name|
         field = CsvModel::Field.new(self, name, options)
 
-        next if !name.is_a?(Symbol) || @fields.include?(field)
-
-        @fields << field if field.valid?
+        @fields << field if field.valid? && !@fields.include?(field)
       end
 
       define_attr_reader

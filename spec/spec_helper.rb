@@ -2,9 +2,10 @@ require 'codeclimate-test-reporter'
 CodeClimate::TestReporter.start
 
 require 'rspec/collection_matchers'
+require 'active_support/core_ext/object/blank'
 
 require 'require_all'
-require_all 'app/**/*.rb'
+require_relative '../app'
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|

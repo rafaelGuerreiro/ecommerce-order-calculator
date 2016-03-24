@@ -59,6 +59,28 @@ describe CsvModel::Field do
       expect(field.options.keys).to have(2).keys
       expect(field.options.keys).to include(:presence, :type)
     end
+
+    it 'deletes unknown keys, keeping known ones' do
+      field = CsvModel::Field.new Foo, :name, presence: false, test: 'not ok'
+
+      expect(field.options.key?(:test)).to be_falsy
+
+      expect(field.options[:presence]).to be_falsy
+      expect(field.options[:type]).to be(:string)
+
+      expect(field.options.keys).to have(2).keys
+      expect(field.options.keys).to include(:presence, :type)
+    end
+
+    it 'sets the number pattern when type is :numeric' do
+      field = CsvModel::Field.new Foo, :age, type: :numeric
+
+      expect(field.options[:type]).to be(:numeric)
+      expect(field.options[:pattern]).to_not be_nil
+
+      expect(field.options.keys).to have(3).keys
+      expect(field.options.keys).to include(:presence, :type, :pattern)
+    end
   end
 
   describe '#valid?' do

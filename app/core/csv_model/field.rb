@@ -3,9 +3,6 @@ module CsvModel
     attr_reader :clazz, :name, :options
 
     def initialize(clazz, name, **options)
-      # (clazz:, name:, presence: true, pattern: nil,
-      # type: :string, enum: nil, references: nil, default: nil)
-
       @clazz = clazz
       @name = name
       @options = normalize_options(options)
@@ -74,14 +71,46 @@ module CsvModel
     private
 
     def normalize_options(options)
-      options = {
+      options = merge_default(options)
+
+      delete_unknown_keys(options)
+      normalize_types(options)
+
+      options.freeze
+    end
+
+    def merge_default(options)
+      {
         presence: true,
         type: :string
       }.merge(options)
+    end
 
-      # set pattern
-      # verify types
-      options.freeze
+    def delete_unknown_keys(options)
+      valid_keys = [:presence, :pattern, :type, :enum, :references, :default]
+      options.delete_if { |key, _| !valid_keys.include?(key) }
+    end
+
+    def normalize_types(options)
+      options[:type] = :numeric if options[:references].is_a? CsvModel
+
+      if options[:enum].present?
+        options[:type] = :enum
+        options[:pattern] = Regexp.new("(#{options[:enum].join('|')})")
+      end
+
+      include_default_patterns(options)
+    end
+
+    def include_default_patterns(options)
+      unless options[:pattern].present?
+        {
+          numeric: /\A\d*\.?\d+\z/,
+          date: %r(\A\d{4}\/\d{2}\/\d{2}\z)
+        }.each do |type, pattern|
+          options[:pattern] = pattern if options[:type] == type
+        end
+      end
     end
   end
 end
