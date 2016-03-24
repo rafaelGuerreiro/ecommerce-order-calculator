@@ -12,7 +12,7 @@ module CsvModel
 
         next if !name.is_a?(Symbol) || @fields.include?(field)
 
-        @fields << field
+        @fields << field if field.valid?
       end
 
       define_attr_reader
