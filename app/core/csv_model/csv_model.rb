@@ -1,7 +1,9 @@
+# require 'byebug'
+
 module CsvModel
   module ClassMethods
     def define_field(name, **options)
-      define_fields [name], options
+      define_fields name, **options
     end
 
     def define_fields(*names, **options)
