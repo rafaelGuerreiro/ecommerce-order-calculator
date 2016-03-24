@@ -178,7 +178,23 @@ describe CsvModel::Field do
     end
   end
 
-  describe '#options' do
+  describe '#to_attr_reader' do
+    it 'delegates to attr_reader when it is not a date' do
+      field = CsvModel::Field.new Foo, :attribute_xpto, type: :numeric
+      expect(field.to_attr_reader).to eq('attr_reader :attribute_xpto')
+    end
+
+    it 'converts a date to a date field' do
+      field = CsvModel::Field.new Foo, :birthday, type: :date
+      expect(field.to_attr_reader)
+        .to eq(%(
+          def birthday
+            return @birthday if @birthday.is_a? Date
+
+            Date.strptime(@birthday, '%Y/%m/%d')
+          end
+        ))
+    end
   end
 
   describe '#hash' do

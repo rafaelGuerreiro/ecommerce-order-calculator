@@ -30,7 +30,7 @@ module CsvModel
 
     def define_attr_reader
       @fields.each do |field|
-        class_eval { attr_reader field.name }
+        class_eval field.to_attr_reader
       end
     end
 

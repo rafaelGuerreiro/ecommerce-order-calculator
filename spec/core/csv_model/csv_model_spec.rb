@@ -31,7 +31,7 @@ describe CsvModel do
       expect(foo.invalid?).to be_falsy
     end
 
-    it 'properly validates numeric fields' do
+    it 'properly add validation for numeric fields' do
       Foo.class_eval { define_field :number, type: :numeric }
 
       foo = Foo.new number: 55
@@ -69,6 +69,29 @@ describe CsvModel do
       expect(foo.age).to be_nil
       expect(foo.weight).to be_nil
       expect(foo.height).to be_nil
+
+      expect(foo.valid?).to be_truthy
+      expect(foo.invalid?).to be_falsy
+    end
+
+    it 'properly adds validation for date fields' do
+      Foo.class_eval do
+        define_fields :name
+        define_fields :birthday, type: :date
+      end
+
+      foo = Foo.new name: 'Rafael Guerreiro', birthday: '1992/06/09'
+
+      expect(foo.name).to eq('Rafael Guerreiro')
+      expect(foo.birthday).to eq(DateTime.new(1992, 6, 9))
+
+      expect(foo.valid?).to be_truthy
+      expect(foo.invalid?).to be_falsy
+
+      foo = Foo.new name: 'Rafael Guerreiro', birthday: DateTime.new(1992, 6, 9)
+
+      expect(foo.name).to eq('Rafael Guerreiro')
+      expect(foo.birthday).to eq(DateTime.new(1992, 6, 9))
 
       expect(foo.valid?).to be_truthy
       expect(foo.invalid?).to be_falsy

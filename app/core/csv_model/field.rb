@@ -1,5 +1,5 @@
 module CsvModel
-  class Field
+  class Field # rubocop:disable Metrics/ClassLength
     attr_reader :clazz, :name, :options
 
     def initialize(clazz, name, **options)
@@ -30,8 +30,18 @@ module CsvModel
       argument.strip
     end
 
-    def to_assignment
+    def to_assignment # rubocop:disable Metrics/MethodLength
       return if invalid?
+
+      if @options[:type] == :date
+        return %(
+          if #{@name}.is_a?(Date)
+            @#{@name} = #{@name}.strftime('%Y/%m/%d')
+          else
+            @#{@name} = #{@name}
+          end
+        )
+      end
 
       "@#{@name} = #{@name}"
     end
@@ -51,6 +61,20 @@ module CsvModel
       end
 
       validity
+    end
+
+    def to_attr_reader
+      if @options[:type] == :date
+        return %(
+          def #{@name}
+            return @#{@name} if @#{@name}.is_a? Date
+
+            Date.strptime(@#{@name}, '%Y/%m/%d')
+          end
+        )
+      end
+
+      "attr_reader :#{@name}"
     end
 
     def hash
