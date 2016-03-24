@@ -1,6 +1,6 @@
 module CsvModel
   class Field
-    attr_reader :name
+    attr_reader :clazz, :name
 
     def initialize(clazz, name, **options)
       # (clazz:, name:, presence: true, pattern: nil,
@@ -23,6 +23,8 @@ module CsvModel
     end
 
     def to_argument
+      return if invalid?
+
       argument = "#{@name}: #{@options[:default]}"
       argument << 'nil' if @options.key?(:default) && @options[:default].nil?
 
@@ -30,10 +32,14 @@ module CsvModel
     end
 
     def to_assignment
+      return if invalid?
+
       "@#{@name} = #{@name}"
     end
 
     def to_validity
+      return if invalid?
+
       validity = ''
 
       if @options[:presence]

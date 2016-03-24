@@ -18,12 +18,28 @@ describe CsvModel::Field do
       field = CsvModel::Field.new Foo, :an_attribute, default: nil
       expect(field.to_argument).to eq('an_attribute: nil')
     end
+
+    it 'returns nil when field is invalid' do
+      field = CsvModel::Field.new nil, :attribute_xpto
+      expect(field.to_argument).to be_nil
+
+      field = CsvModel::Field.new Foo, 'attribute_xpto'
+      expect(field.to_argument).to be_nil
+    end
   end
 
   describe '#to_assignment' do
     it 'assigns the argument to its attribute' do
       field = CsvModel::Field.new Foo, :name
       expect(field.to_assignment).to eq('@name = name')
+    end
+
+    it 'returns nil when field is invalid' do
+      field = CsvModel::Field.new nil, :attribute_xpto
+      expect(field.to_assignment).to be_nil
+
+      field = CsvModel::Field.new Foo, 'attribute_xpto'
+      expect(field.to_assignment).to be_nil
     end
   end
 
@@ -83,6 +99,14 @@ describe CsvModel::Field do
         .to eq("\nresult = @id.present? if result" \
           "\nresult = Regexp.new(\"(?-mix:\\A[0-9]+\\z)\")" \
           '.match(@id) if result && @id')
+    end
+
+    it 'returns nil when field is invalid' do
+      field = CsvModel::Field.new nil, :attribute_xpto
+      expect(field.to_validity).to be_nil
+
+      field = CsvModel::Field.new Foo, 'attribute_xpto'
+      expect(field.to_validity).to be_nil
     end
   end
 end
