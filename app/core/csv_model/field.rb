@@ -67,7 +67,11 @@ module CsvModel
     def ==(other)
       return @name.to_s == other.to_s unless other.is_a? Field
 
-      @clazz == other.clazz && @name == other.name
+      eql?(other)
+    end
+
+    def eql?(other)
+      other.is_a?(Field) && @clazz == other.clazz && @name == other.name
     end
 
     private

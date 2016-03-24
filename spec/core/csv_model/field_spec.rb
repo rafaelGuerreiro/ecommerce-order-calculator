@@ -109,4 +109,106 @@ describe CsvModel::Field do
       expect(field.to_validity).to be_nil
     end
   end
+
+  describe '#options' do
+  end
+
+  describe '#hash' do
+    it 'is the same for different instances with different options ' \
+      'but same class and same field name' do
+      field1 = CsvModel::Field.new Foo, :id, pattern: /\A[0-9]+\z/
+      field2 = CsvModel::Field.new Foo, :id, presence: false
+
+      expect(field1).not_to be(field2)
+      expect(field1.hash).to eq(field2.hash)
+    end
+
+    it 'is different for different classes and same field name' do
+      field1 = CsvModel::Field.new String, :id
+      field2 = CsvModel::Field.new Foo, :id
+
+      expect(field1).not_to be(field2)
+      expect(field1.hash).not_to eq(field2.hash)
+    end
+
+    it 'is different for different field name and same class' do
+      field1 = CsvModel::Field.new Foo, :id
+      field2 = CsvModel::Field.new Foo, :name
+
+      expect(field1).not_to be(field2)
+      expect(field1.hash).not_to eq(field2.hash)
+    end
+  end
+
+  describe '#==' do
+    it 'is the same for different instances with different options ' \
+      'but same class and same field name' do
+      field1 = CsvModel::Field.new Foo, :id, pattern: /\A[0-9]+\z/
+      field2 = CsvModel::Field.new Foo, :id, presence: false
+
+      expect(field1).not_to be(field2)
+      expect(field1).to eq(field2)
+    end
+
+    it 'is different for different classes and same field name' do
+      field1 = CsvModel::Field.new String, :id
+      field2 = CsvModel::Field.new Foo, :id
+
+      expect(field1).not_to be(field2)
+      expect(field1).not_to eq(field2)
+    end
+
+    it 'is different for different field name and same class' do
+      field1 = CsvModel::Field.new Foo, :id
+      field2 = CsvModel::Field.new Foo, :name
+
+      expect(field1).not_to be(field2)
+      expect(field1).not_to eq(field2)
+    end
+
+    it 'is equals to Strings with the same name of the field' do
+      field = CsvModel::Field.new Foo, :id
+
+      expect(field).not_to be('id')
+      expect(field).to eq('id')
+      expect(field).to eq(:id)
+    end
+  end
+
+  describe '#eql?' do
+    it 'is the same for different instances with different options ' \
+      'but same class and same field name' do
+      field1 = CsvModel::Field.new Foo, :id, pattern: /\A[0-9]+\z/
+      field2 = CsvModel::Field.new Foo, :id, presence: false
+
+      expect(field1).not_to be(field2)
+      expect(field1).to eql(field2)
+    end
+
+    it 'is different for different classes and same field name' do
+      field1 = CsvModel::Field.new String, :id
+      field2 = CsvModel::Field.new Foo, :id
+
+      expect(field1).not_to be(field2)
+      expect(field1).not_to eql(field2)
+    end
+
+    it 'is different for different field name and same class' do
+      field1 = CsvModel::Field.new Foo, :id
+      field2 = CsvModel::Field.new Foo, :name
+
+      expect(field1).not_to be(field2)
+      expect(field1).not_to eql(field2)
+    end
+
+    it 'returns false for Strings with the same name of the field' do
+      field = CsvModel::Field.new Foo, :id
+
+      expect(field).not_to be('id')
+      expect(field).to eq('id')
+      expect(field).to eq(:id)
+      expect(field).not_to eql('id')
+      expect(field).not_to eql(:id)
+    end
+  end
 end
