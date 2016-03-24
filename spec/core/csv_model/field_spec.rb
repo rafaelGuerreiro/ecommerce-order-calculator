@@ -72,7 +72,7 @@ describe CsvModel::Field do
       expect(field.options.keys).to include(:presence, :type)
     end
 
-    it 'sets the number pattern when type is :numeric' do
+    it 'sets the pattern when type is :numeric' do
       field = CsvModel::Field.new Foo, :age, type: :numeric
 
       expect(field.options[:type]).to be(:numeric)
@@ -80,6 +80,28 @@ describe CsvModel::Field do
 
       expect(field.options.keys).to have(3).keys
       expect(field.options.keys).to include(:presence, :type, :pattern)
+    end
+
+    it 'sets the pattern when type is :date' do
+      field = CsvModel::Field.new Foo, :birthday, type: :date
+
+      expect(field.options[:type]).to be(:date)
+      expect(field.options[:pattern]).to_not be_nil
+
+      expect(field.options.keys).to have(3).keys
+      expect(field.options.keys).to include(:presence, :type, :pattern)
+    end
+
+    it 'sets the pattern when a enum is defined' do
+      field = CsvModel::Field.new Foo, :discount_type,
+                                  enum: [:absolute, :percent]
+
+      expect(field.options[:type]).to be(:enum)
+      expect(field.options[:pattern]).to_not be_nil
+
+      expect(field.options.keys).to have(4).keys
+      expect(field.options.keys)
+        .to include(:presence, :type, :pattern, :enum)
     end
   end
 
