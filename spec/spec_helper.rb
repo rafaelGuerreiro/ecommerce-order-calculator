@@ -1,6 +1,8 @@
 require 'codeclimate-test-reporter'
 CodeClimate::TestReporter.start
 
+require 'rspec/collection_matchers'
+
 require 'require_all'
 require_all 'app/**/*.rb'
 

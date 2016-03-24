@@ -1,17 +1,14 @@
 module CsvModel
   class Field
-    attr_reader :clazz, :name
+    attr_reader :clazz, :name, :options
 
     def initialize(clazz, name, **options)
       # (clazz:, name:, presence: true, pattern: nil,
-      # type: :string, enum: nil, through: nil, default: nil)
+      # type: :string, enum: nil, references: nil, default: nil)
 
       @clazz = clazz
       @name = name
-      @options = normalize_options({
-        presence: true,
-        type: :string
-      }.merge(options))
+      @options = normalize_options(options)
     end
 
     def valid?
@@ -77,9 +74,14 @@ module CsvModel
     private
 
     def normalize_options(options)
+      options = {
+        presence: true,
+        type: :string
+      }.merge(options)
+
       # set pattern
       # verify types
-      options
+      options.freeze
     end
   end
 end

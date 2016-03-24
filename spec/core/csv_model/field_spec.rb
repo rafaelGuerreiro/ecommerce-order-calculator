@@ -43,6 +43,24 @@ describe CsvModel::Field do
     end
   end
 
+  describe '#options' do
+    it 'is frozen' do
+      field = CsvModel::Field.new Foo, :name, presence: false
+      expect { field.options[:presence] = true }
+        .to raise_error(RuntimeError, "can't modify frozen Hash")
+    end
+
+    it 'has presence: true and type: :string as default' do
+      field = CsvModel::Field.new Foo, :name
+
+      expect(field.options[:presence]).to be_truthy
+      expect(field.options[:type]).to be(:string)
+
+      expect(field.options.keys).to have(2).keys
+      expect(field.options.keys).to include(:presence, :type)
+    end
+  end
+
   describe '#valid?' do
     it 'is valid when class is a class and name is a symbol' do
       field = CsvModel::Field.new Foo, nil
