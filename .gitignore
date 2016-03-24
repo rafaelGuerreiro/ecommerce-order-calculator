@@ -10,6 +10,7 @@
 /tmp/
 
 .DS_Store
+.byebug_history
 Gemfile.lock
 
 ## Documentation cache and generated files:
