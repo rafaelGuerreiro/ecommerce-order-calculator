@@ -19,6 +19,12 @@ describe CsvModel::Field do
       expect(field.to_argument).to eq('an_attribute: nil')
     end
 
+    it 'returns an optional argument when default value is not defined '\
+      'but it is not required' do
+      field = CsvModel::Field.new Foo, :an_attribute, presence: false
+      expect(field.to_argument).to eq('an_attribute: nil')
+    end
+
     it 'returns nil when field is invalid' do
       field = CsvModel::Field.new nil, :attribute_xpto
       expect(field.to_argument).to be_nil
@@ -149,8 +155,8 @@ describe CsvModel::Field do
                                   pattern: /\A[0-9]+\z/
 
       expect(field.to_validity)
-        .to eq("\nresult = Regexp.new(\"(?-mix:\\A[0-9]+\\z)\")" \
-          '.match(@id) if result && @id')
+        .to eq("\nresult = Regexp.new(\"(?-mix:\\\\A[0-9]+\\\\z)\")" \
+          '.match(@id.to_s).present? if result && @id')
     end
 
     it 'checks both pattern and presence when presence is true ' \
@@ -159,8 +165,8 @@ describe CsvModel::Field do
 
       expect(field.to_validity)
         .to eq("\nresult = @id.present? if result" \
-          "\nresult = Regexp.new(\"(?-mix:\\A[0-9]+\\z)\")" \
-          '.match(@id) if result && @id')
+          "\nresult = Regexp.new(\"(?-mix:\\\\A[0-9]+\\\\z)\")" \
+          '.match(@id.to_s).present? if result && @id')
     end
 
     it 'returns nil when field is invalid' do

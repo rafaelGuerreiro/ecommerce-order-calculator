@@ -20,7 +20,12 @@ module CsvModel
       return if invalid?
 
       argument = "#{@name}: #{@options[:default]}"
-      argument << 'nil' if @options.key?(:default) && @options[:default].nil?
+
+      if (@options.key?(:default) && @options[:default].nil?) ||
+         (!@options.key?(:default) && !@options[:presence])
+
+        argument << 'nil'
+      end
 
       argument.strip
     end
@@ -41,8 +46,8 @@ module CsvModel
       end
 
       if @options[:pattern]
-        validity << "\nresult = Regexp.new(\"#{@options[:pattern]}\")" \
-          ".match(@#{@name}) if result && @#{@name}"
+        validity << "\nresult = Regexp.new(\"#{stringfied_pattern}\")" \
+          ".match(@#{@name}.to_s).present? if result && @#{@name}"
       end
 
       validity
@@ -111,6 +116,10 @@ module CsvModel
           options[:pattern] = pattern if options[:type] == type
         end
       end
+    end
+
+    def stringfied_pattern
+      @options[:pattern].to_s.gsub(/\\/, '\\' * 4)
     end
   end
 end
