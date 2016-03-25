@@ -18,6 +18,7 @@ module CsvModel
 
         define_attr_reader
         define_initialize
+        define_enumeration_checks
       end
 
       def define_id_field(**options)
@@ -65,6 +66,11 @@ module CsvModel
 
       def fields_as_assignments
         fields.map(&:to_assignment).join("\n")
+      end
+
+      def define_enumeration_checks
+        checks = fields.map(&:to_enumeration_checks).join("\n")
+        class_eval checks if checks.present?
       end
     end
 

@@ -8,7 +8,7 @@ module CsvModel
         @options[:enum].each do |enum|
           methods << %(
             def #{enum}?
-              @#{field.name} == :#{enum}
+              @#{@name} == :#{enum}
             end)
         end
 
