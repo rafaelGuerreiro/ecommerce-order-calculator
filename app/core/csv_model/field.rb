@@ -20,13 +20,9 @@ module CsvModel
       def to_argument
         return if invalid?
 
-        argument = "#{@name}: #{@options[:default]}"
-
-        if (@options.key?(:default) && @options[:default].nil?) ||
-           (!@options.key?(:default) && !@options[:presence])
-
-          argument << 'nil'
-        end
+        argument = "#{@name}: "
+        argument << 'nil' unless @options[:default]
+        argument << @options[:default].inspect if @options[:default]
 
         argument.strip
       end
