@@ -14,7 +14,7 @@ describe CsvModel::FieldDefinition::Enum do
             def percent?
               @type == :percent
             end)
-                                                )
+                                               )
     end
 
     it 'returns empty when field is not an enum' do

@@ -35,4 +35,39 @@ describe Coupon, :model do
       expect(coupons).to have(5).coupons
     end
   end
+
+  describe 'discount_type check' do
+    it 'returns true for absolute? when this Coupon has an absolute discount' do
+      coupon = Coupon.new id: 12,
+                          value: 15,
+                          discount_type: :absolute,
+                          expiration: Date.new + 1,
+                          usage_limit: 2
+
+      expect(coupon.absolute?).to be_truthy
+      expect(coupon.percent?).to be_falsy
+    end
+
+    it 'returns true for percent? when this Coupon has an percent discount' do
+      coupon = Coupon.new id: 12,
+                          value: 15,
+                          discount_type: :percent,
+                          expiration: Date.new + 1,
+                          usage_limit: 2
+
+      expect(coupon.absolute?).to be_falsy
+      expect(coupon.percent?).to be_truthy
+    end
+
+    it 'returns false for both when this Coupon has an invalid discount_type' do
+      coupon = Coupon.new id: 12,
+                          value: 15,
+                          discount_type: :abs,
+                          expiration: Date.new + 1,
+                          usage_limit: 2
+
+      expect(coupon.absolute?).to be_falsy
+      expect(coupon.percent?).to be_falsy
+    end
+  end
 end
