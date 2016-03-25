@@ -44,12 +44,12 @@ describe CsvModel do
       expect(foo.invalid?).to be_falsy
 
       foo = Foo.new number: '55.5'
-      expect(foo.number).to eq('55.5')
+      expect(foo.number).to eq(55.5)
       expect(foo.valid?).to be_truthy
       expect(foo.invalid?).to be_falsy
 
       foo = Foo.new number: 'Rafael Guerreiro'
-      expect(foo.number).to eq('Rafael Guerreiro')
+      expect(foo.number).to be_nil
       expect(foo.valid?).to be_falsy
       expect(foo.invalid?).to be_truthy
     end

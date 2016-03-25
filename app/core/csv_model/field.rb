@@ -1,6 +1,6 @@
 module CsvModel
   module FieldDefinition
-    class Field
+    class Field # rubocop:disable Metrics/ClassLength
       attr_reader :clazz, :name, :options
 
       def initialize(clazz, name, **options)
@@ -27,24 +27,16 @@ module CsvModel
         argument.strip
       end
 
-      def to_assignment # rubocop:disable Metrics/MethodLength
+      def to_assignment
         return if invalid?
 
-        if @options[:type] == :date
-          return %(
-            begin
-              if #{@name}.is_a?(String)
-                #{@name} = Date.strptime(#{@name}, '%Y/%m/%d')
-              end
-            rescue ArgumentError
-              #{@name} = nil
-            end
+        assignment = ''
+        space = "\n          "
 
-            @#{@name} = #{@name}
-          )
-        end
+        assignment << date_assignment + space if @options[:type] == :date
+        assignment << number_assignment + space if @options[:type] == :numeric
 
-        "@#{@name} = #{@name}"
+        assignment << "@#{@name} = #{@name}"
       end
 
       def to_validity
@@ -130,6 +122,32 @@ module CsvModel
 
       def stringfied_pattern
         @options[:pattern].to_s.gsub(/\\/, '\\' * 4)
+      end
+
+      def date_assignment
+        %(
+          begin
+            if #{@name}.is_a?(String)
+              #{@name} = Date.strptime(#{@name}, '%Y/%m/%d')
+            end
+          rescue ArgumentError
+            #{@name} = nil
+          end)
+      end
+
+      def number_assignment
+        %(
+          begin
+            if #{@name}.is_a?(String)
+              if #{@name}.include?('.')
+                #{@name} = Float(#{@name})
+              else
+                #{@name} = Integer(#{@name})
+              end
+            end
+          rescue ArgumentError
+            #{@name} = nil
+          end)
       end
     end
   end

@@ -178,14 +178,12 @@ describe CsvParser, :model do
       valid = models.select(&:valid?)
       invalid = models.select(&:invalid?)
 
-      expect(valid[0].id).to eq('2')
+      expect(valid[0].id).to eq(2)
       expect(valid[0].issued_at).to eq(Date.new(2015, 12, 25))
       expect(valid.count).to eq(1)
 
-      expect(invalid.map(&:id))
-        .to include('a name', '1', nil, ' ', '3')
-      expect(invalid.map(&:issued_at).uniq)
-        .to contain_exactly(nil)
+      expect(invalid.map(&:id).uniq).to contain_exactly(1, nil, 3)
+      expect(invalid.map(&:issued_at).uniq).to contain_exactly(nil)
       expect(invalid.count).to eq(7)
     end
 

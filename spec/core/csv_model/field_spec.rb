@@ -61,6 +61,38 @@ describe CsvModel::FieldDefinition::Field do
       field = CsvModel::FieldDefinition::Field.new Foo, 'attribute_xpto'
       expect(field.to_assignment).to be_nil
     end
+
+    it 'converts to date when type is :date' do
+      field = CsvModel::FieldDefinition::Field.new Foo, :dt, type: :date
+      expect(field.to_assignment).to eq(%(
+          begin
+            if dt.is_a?(String)
+              dt = Date.strptime(dt, '%Y/%m/%d')
+            end
+          rescue ArgumentError
+            dt = nil
+          end
+          @dt = dt)
+                                       )
+    end
+
+    it 'converts to number when type is :numeric' do
+      field = CsvModel::FieldDefinition::Field.new Foo, :id, type: :numeric
+      expect(field.to_assignment).to eq(%(
+          begin
+            if id.is_a?(String)
+              if id.include?('.')
+                id = Float(id)
+              else
+                id = Integer(id)
+              end
+            end
+          rescue ArgumentError
+            id = nil
+          end
+          @id = id)
+                                       )
+    end
   end
 
   describe '#options' do
