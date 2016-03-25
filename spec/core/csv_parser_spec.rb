@@ -142,7 +142,7 @@ describe CsvParser, :model do
       csv_data = "1,a name,an ignored field\n2,another name,\n,,\n0, , \n"
       file_path = 'a_csv_file.csv'
 
-      stub_file file_path, csv_data
+      stub_csv_file file_path, csv_data
 
       Foo.class_eval do
         define_id_field
@@ -167,7 +167,7 @@ describe CsvParser, :model do
       csv_data = "a name,a field\n1,\n,\n , \n\n2,2015/12/25\n3,2000/13/12\n\n"
       file_path = 'another_csv_file.csv'
 
-      stub_file file_path, csv_data
+      stub_csv_file file_path, csv_data
 
       Foo.class_eval do
         define_id_field
@@ -188,13 +188,6 @@ describe CsvParser, :model do
       expect(invalid.map(&:id).uniq).to contain_exactly(1, nil, 3)
       expect(invalid.map(&:issued_at).uniq).to contain_exactly(nil)
       expect(invalid.count).to eq(7)
-    end
-
-    def stub_file(file_path, csv_data)
-      allow(File).to receive(:exist?).with(file_path).and_return(true)
-      allow(File).to receive(:open)
-        .with(file_path, universal_newline: false)
-        .and_return(StringIO.new(csv_data))
     end
   end
 end

@@ -1,3 +1,5 @@
+require 'byebug'
+
 module CsvModel
   module Loader
     module ClassMethods
@@ -5,7 +7,7 @@ module CsvModel
         parser = CsvParser.new(self, file_path)
         models = parser.parse_csv
 
-        CsvModelRepository.persist(models)
+        CsvModelRepository.persist_all(models)
       end
 
       def find(id)

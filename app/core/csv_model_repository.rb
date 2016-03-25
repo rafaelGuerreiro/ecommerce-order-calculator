@@ -1,3 +1,5 @@
+require 'byebug'
+
 class CsvModelRepository
   class << self
     def persist(model)
@@ -11,14 +13,10 @@ class CsvModelRepository
       return [] unless models.present?
       @repository ||= {}
 
-      saved = []
-      models.each do |model|
-        next if !model.is_a?(CsvModel::Base) || model.invalid?
-
-        persist_index model.id, model, saved
-      end
-
-      saved
+      models.select { |model| model.is_a?(CsvModel::Base) && model.valid? }
+        .select { |model| !exist?(model) }
+        .map { |model| persist_index model.id, model }
+        .compact
     end
 
     def find(clazz, id)
@@ -28,11 +26,18 @@ class CsvModelRepository
       hash[id] if hash
     end
 
+    def exist?(model)
+      return false unless model.is_a?(CsvModel::Base)
+
+      @repository[model.class] && @repository[model.class].key?(model.id)
+    end
+
     private
 
-    def persist_index(id, model, saved)
+    def persist_index(id, model)
       @repository[model.class] ||= {}
-      saved << (@repository[model.class][id] ||= model)
+
+      @repository[model.class][id] = model unless exist?(model)
     end
   end
 end

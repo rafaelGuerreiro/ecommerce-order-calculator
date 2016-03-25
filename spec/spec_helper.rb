@@ -7,7 +7,11 @@ require 'active_support/core_ext/object/blank'
 require 'require_all'
 require_relative '../app'
 
+require_relative 'helper/stub_csv_file'
+
 RSpec.configure do |config|
+  config.include CsvFile::Helper
+
   config.expect_with :rspec do |expectations|
     # This option will default to `true` in RSpec 4. It makes the `description`
     # and `failure_message` of custom matchers include text for helper methods
