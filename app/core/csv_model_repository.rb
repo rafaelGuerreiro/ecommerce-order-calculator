@@ -1,5 +1,3 @@
-require 'byebug'
-
 class CsvModelRepository
   class << self
     def persist(model)
@@ -14,9 +12,9 @@ class CsvModelRepository
       @repository ||= {}
 
       models.select { |model| model.is_a?(CsvModel::Base) && model.valid? }
-        .select { |model| !exist?(model) }
-        .map { |model| persist_index model.id, model }
-        .compact
+            .select { |model| !exist?(model) }
+            .map { |model| persist_index model.id, model }
+            .compact
     end
 
     def find(clazz, id)

@@ -1,6 +1,16 @@
+require_relative 'argument'
+require_relative 'assignment'
+require_relative 'enum'
+require_relative 'validator'
+
 module CsvModel
   module FieldDefinition
     class Field
+      include CsvModel::FieldDefinition::Argument
+      include CsvModel::FieldDefinition::Assignment
+      include CsvModel::FieldDefinition::Enum
+      include CsvModel::FieldDefinition::Validator
+
       attr_reader :clazz, :name, :options
 
       def initialize(clazz, name, **options)
@@ -15,46 +25,6 @@ module CsvModel
 
       def invalid?
         !valid?
-      end
-
-      def validable?
-        valid? && (@options[:presence] || @options[:pattern])
-      end
-
-      def value_valid?(value)
-        return false unless validable?
-
-        valid = true
-
-        valid = value.present? if @options[:presence]
-
-        if @options[:pattern] && valid && value
-          valid = @options[:pattern].match(value.to_s).present?
-        end
-
-        valid
-      end
-
-      def to_argument
-        return if invalid?
-
-        argument = "#{@name}: "
-        argument << 'nil' unless @options[:default]
-        argument << @options[:default].inspect if @options[:default]
-
-        argument.strip
-      end
-
-      def to_assignment
-        return if invalid?
-
-        assignment = ''
-        space = "\n          "
-
-        assignment << date_assignment + space if @options[:type] == :date
-        assignment << number_assignment + space if @options[:type] == :numeric
-
-        assignment << "@#{@name} = #{@name}"
       end
 
       def to_attr_reader
@@ -111,32 +81,6 @@ module CsvModel
           options[:type] = :enum
           options[:pattern] = Regexp.new("(#{options[:enum].join('|')})")
         end
-      end
-
-      def date_assignment
-        %(
-          begin
-            if #{@name}.is_a?(String)
-              #{@name} = Date.strptime(#{@name}, '%Y/%m/%d')
-            end
-          rescue ArgumentError
-            #{@name} = nil
-          end)
-      end
-
-      def number_assignment
-        %(
-          begin
-            if #{@name}.is_a?(String)
-              if #{@name}.include?('.')
-                #{@name} = Float(#{@name})
-              else
-                #{@name} = Integer(#{@name})
-              end
-            end
-          rescue ArgumentError
-            #{@name} = nil
-          end)
       end
     end
   end

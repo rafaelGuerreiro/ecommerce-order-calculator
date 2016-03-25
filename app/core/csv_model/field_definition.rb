@@ -1,4 +1,4 @@
-require_relative 'field'
+require_relative 'field_definition/field'
 
 module CsvModel
   module FieldDefinition
