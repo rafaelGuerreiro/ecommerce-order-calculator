@@ -12,12 +12,14 @@ module CsvModel
       valid = true
 
       fields = self.class.fields
-      fields.each do |field|
-        break unless valid
-        next unless field.validable?
+      if fields.present?
+        fields.each do |field|
+          break unless valid
+          next unless field.validable?
 
-        value = instance_variable_get("@#{field.name}")
-        valid = field.value_valid?(value)
+          value = instance_variable_get("@#{field.name}")
+          valid = field.value_valid?(value)
+        end
       end
 
       valid

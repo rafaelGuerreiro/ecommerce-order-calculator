@@ -1,12 +1,14 @@
 class CsvModelRepository
   class << self
-    def persist(*models)
-      return unless models.present?
+    def persist(model)
+      return unless model.present?
 
-      persist_all models
+      response = persist_all([model])
+      response[0] if response.present?
     end
 
     def persist_all(models)
+      return [] unless models.present?
       @repository ||= {}
 
       saved = []
