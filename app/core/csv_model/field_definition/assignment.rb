@@ -4,17 +4,21 @@ module CsvModel
       def to_assignment
         return if invalid?
 
-        assignment = ''
-        space = "\n          "
+        assignment = chose_assignment
+        assignment << "\n          " if assignment.present?
 
-        assignment << date_assignment + space if @options[:type] == :date
-        assignment << number_assignment + space if @options[:type] == :numeric
-        assignment << enum_assignment + space if @options[:type] == :enum
-
-        assignment << "@#{@name} = #{@name}"
+        assignment + "@#{@name} = #{@name}"
       end
 
       private
+
+      def chose_assignment
+        return date_assignment if @options[:type] == :date
+        return number_assignment if @options[:type] == :numeric
+        return enum_assignment if @options[:type] == :enum
+
+        ''
+      end
 
       def date_assignment
         %(
