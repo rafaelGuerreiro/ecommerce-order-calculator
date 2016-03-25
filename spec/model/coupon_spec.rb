@@ -36,6 +36,53 @@ describe Coupon, :model do
     end
   end
 
+  describe '#expired?' do
+    it 'returns true when expiration date is before today' do
+      coupon = Coupon.new id: 12,
+                          value: 15,
+                          discount_type: :absolute,
+                          expiration: Date.new - 1,
+                          usage_limit: 2
+
+      expect(coupon.expired?).to be_truthy
+      expect(coupon.active?).to be_falsy
+    end
+
+    it "returns true when there's no more usage left" do
+      coupon = Coupon.new id: 12,
+                          value: 15,
+                          discount_type: :absolute,
+                          expiration: Date.new + 1,
+                          usage_limit: 0
+
+      expect(coupon.expired?).to be_truthy
+      expect(coupon.active?).to be_falsy
+    end
+
+    it "returns false when there's plenty usage and the expiration " \
+      'date is future' do
+      coupon = Coupon.new id: 12,
+                          value: 15,
+                          discount_type: :absolute,
+                          expiration: '2020/10/21',
+                          usage_limit: 1
+
+      expect(coupon.expired?).to be_falsy
+      expect(coupon.active?).to be_truthy
+    end
+
+    it 'returns false coupon is invalid' do
+      coupon = Coupon.new id: 'a',
+                          value: 15,
+                          discount_type: :absolute,
+                          expiration: '2020/10/21',
+                          usage_limit: 1
+
+      expect(coupon.expired?).to be_falsy
+      expect(coupon.active?).to be_falsy
+    end
+  end
+
   describe 'discount_type check' do
     it 'returns true for absolute? when this Coupon has an absolute discount' do
       coupon = Coupon.new id: 12,
