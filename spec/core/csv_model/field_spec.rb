@@ -102,7 +102,7 @@ describe CsvModel::FieldDefinition::Field do
       expect(field.options.keys).to include(:presence, :type, :pattern)
     end
 
-    it 'sets the pattern when a enum is defined' do
+    it 'sets the pattern when an enum is defined' do
       field = CsvModel::FieldDefinition::Field.new Foo, :discount_type,
                                                    enum: [:absolute, :percent]
 

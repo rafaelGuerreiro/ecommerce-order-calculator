@@ -59,7 +59,7 @@ describe CsvParser, :model do
   end
 
   describe '#valid?' do
-    it 'returns true when the file path is present' do
+    it 'returns true when the model class and the file path is present' do
       csv = CsvParser.new(Foo, ' ../folder/a.file.csv   ')
       expect(csv.valid?).to be_truthy
 
@@ -75,6 +75,17 @@ describe CsvParser, :model do
       expect(csv.valid?).to be_falsy
 
       csv = CsvParser.new(Foo, '    ')
+      expect(csv.valid?).to be_falsy
+    end
+
+    it 'returns false when class does not extend CsvModel::Base' do
+      csv = CsvParser.new(nil, '../folder/csv_file')
+      expect(csv.valid?).to be_falsy
+
+      csv = CsvParser.new(String, '../folder/csv_file')
+      expect(csv.valid?).to be_falsy
+
+      csv = CsvParser.new(CsvModel::Base, '../folder/csv_file')
       expect(csv.valid?).to be_falsy
     end
   end
