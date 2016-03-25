@@ -8,25 +8,36 @@ module CsvModel
 
     def valid?
       return false unless respond_to? :id
-
       valid = true
 
       fields = self.class.fields
-      if fields.present?
-        fields.each do |field|
-          break unless valid
-          next unless field.validable?
-
-          value = instance_variable_get("@#{field.name}")
-          valid = field.value_valid?(value)
-        end
-      end
+      valid = all_fields_valid?(fields) if fields.present?
 
       valid
     end
 
     def invalid?
       !valid?
+    end
+
+    private
+
+    def all_fields_valid?(fields)
+      valid = true
+
+      fields.each do |field|
+        break unless valid
+        next unless field.validable?
+
+        valid = field_valid?(field)
+      end
+
+      valid
+    end
+
+    def field_valid?(field)
+      value = instance_variable_get("@#{field.name}")
+      field.value_valid?(value)
     end
   end
 end
