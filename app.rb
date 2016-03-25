@@ -1,3 +1,5 @@
+#!/usr/bin/ruby
+
 require 'active_support/core_ext/object/blank'
 
 require 'require_all'
