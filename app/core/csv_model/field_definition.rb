@@ -3,6 +3,8 @@ require_relative 'field'
 module CsvModel
   module FieldDefinition
     module ClassMethods
+      attr_reader :fields
+
       def define_field(name, **options)
         define_fields name, **options
       end

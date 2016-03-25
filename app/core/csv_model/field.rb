@@ -122,7 +122,7 @@ module CsvModel
       end
 
       def normalize_types(options)
-        options[:type] = :numeric if options[:references].is_a? CsvModel
+        options[:type] = :numeric if options[:references].is_a?(CsvModel::Base)
 
         if options[:enum].present?
           options[:type] = :enum
