@@ -20,6 +20,6 @@ In order to test this software, you can run `rspec` on your terminal
 
 or `rspec -f d` to see the documentation.
 
-###Ruby guide
+###Ruby style guide
 
-This software were meant to follow ruby guides, run `rubocop` to check the guide.
+This software was intended to follow ruby style guide, run `rubocop` to check it.
