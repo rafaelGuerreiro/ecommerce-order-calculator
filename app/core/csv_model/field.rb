@@ -1,6 +1,6 @@
 module CsvModel
   module FieldDefinition
-    class Field # rubocop:disable Metrics/ClassLength
+    class Field
       attr_reader :clazz, :name, :options
 
       def initialize(clazz, name, **options)
@@ -15,6 +15,24 @@ module CsvModel
 
       def invalid?
         !valid?
+      end
+
+      def validable?
+        valid? && (@options[:presence] || @options[:pattern])
+      end
+
+      def value_valid?(value)
+        return false unless validable?
+
+        valid = true
+
+        valid = value.present? if @options[:presence]
+
+        if @options[:pattern] && valid && value
+          valid = @options[:pattern].match(value.to_s).present?
+        end
+
+        valid
       end
 
       def to_argument
@@ -37,23 +55,6 @@ module CsvModel
         assignment << number_assignment + space if @options[:type] == :numeric
 
         assignment << "@#{@name} = #{@name}"
-      end
-
-      def to_validity
-        return if invalid?
-
-        validity = ''
-
-        if @options[:presence]
-          validity << "\nresult = @#{@name}.present? if result"
-        end
-
-        if @options[:pattern]
-          validity << "\nresult = Regexp.new(\"#{stringfied_pattern}\")" \
-            ".match(@#{@name}.to_s).present? if result && @#{@name}"
-        end
-
-        validity
       end
 
       def to_attr_reader
@@ -110,18 +111,6 @@ module CsvModel
           options[:type] = :enum
           options[:pattern] = Regexp.new("(#{options[:enum].join('|')})")
         end
-
-        include_default_patterns(options)
-      end
-
-      def include_default_patterns(options)
-        unless options[:pattern].present?
-          options[:pattern] = /\A-?\d*\.?\d+\z/ if options[:type] == :numeric
-        end
-      end
-
-      def stringfied_pattern
-        @options[:pattern].to_s.gsub(/\\/, '\\' * 4)
       end
 
       def date_assignment

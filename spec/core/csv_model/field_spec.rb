@@ -126,14 +126,14 @@ describe CsvModel::FieldDefinition::Field do
       expect(field.options.keys).to include(:presence, :type)
     end
 
-    it 'sets the pattern when type is :numeric' do
+    it 'does not set the pattern when type is :numeric' do
       field = CsvModel::FieldDefinition::Field.new Foo, :age, type: :numeric
 
       expect(field.options[:type]).to be(:numeric)
-      expect(field.options[:pattern]).to_not be_nil
+      expect(field.options[:pattern]).to be_nil
 
-      expect(field.options.keys).to have(3).keys
-      expect(field.options.keys).to include(:presence, :type, :pattern)
+      expect(field.options.keys).to have(2).keys
+      expect(field.options.keys).to include(:presence, :type)
     end
 
     it 'does not set the pattern when type is :date' do
@@ -182,49 +182,6 @@ describe CsvModel::FieldDefinition::Field do
 
       field = CsvModel::FieldDefinition::Field.new Foo, :attribute
       expect(field.invalid?).to be_falsy
-    end
-  end
-
-  describe '#to_validity' do
-    it 'checks presence by default' do
-      field = CsvModel::FieldDefinition::Field.new Foo, :attribute_xpto
-      expect(field.to_validity)
-        .to eq("\nresult = @attribute_xpto.present? if result")
-    end
-
-    it 'checks nothing when presence is falsy' do
-      field = CsvModel::FieldDefinition::Field.new Foo, :attribute_xpto,
-                                                   presence: false
-      expect(field.to_validity).to eq('')
-    end
-
-    it "checks the pattern when there's no presence but a pattern defined" do
-      field = CsvModel::FieldDefinition::Field.new Foo, :id,
-                                                   presence: false,
-                                                   pattern: /\A[0-9]+\z/
-
-      expect(field.to_validity)
-        .to eq("\nresult = Regexp.new(\"(?-mix:\\\\A[0-9]+\\\\z)\")" \
-          '.match(@id.to_s).present? if result && @id')
-    end
-
-    it 'checks both pattern and presence when presence is true ' \
-      'and the pattern is set' do
-      field = CsvModel::FieldDefinition::Field.new Foo, :id,
-                                                   pattern: /\A[0-9]+\z/
-
-      expect(field.to_validity)
-        .to eq("\nresult = @id.present? if result" \
-          "\nresult = Regexp.new(\"(?-mix:\\\\A[0-9]+\\\\z)\")" \
-          '.match(@id.to_s).present? if result && @id')
-    end
-
-    it 'returns nil when field is invalid' do
-      field = CsvModel::FieldDefinition::Field.new nil, :attribute_xpto
-      expect(field.to_validity).to be_nil
-
-      field = CsvModel::FieldDefinition::Field.new Foo, 'attribute_xpto'
-      expect(field.to_validity).to be_nil
     end
   end
 
@@ -340,6 +297,75 @@ describe CsvModel::FieldDefinition::Field do
       expect(field).to eq(:id)
       expect(field).not_to eql('id')
       expect(field).not_to eql(:id)
+    end
+  end
+
+  describe '#validable?' do
+    it 'returns true for default options' do
+      field = CsvModel::FieldDefinition::Field.new Foo, :id
+      expect(field.validable?).to be_truthy
+    end
+
+    it 'returns true when pattern is set' do
+      field = CsvModel::FieldDefinition::Field.new Foo, :age,
+                                                   pattern: /\d{,2}/,
+                                                   presence: false
+      expect(field.validable?).to be_truthy
+    end
+
+    it 'returns true when pattern and presence are set' do
+      field = CsvModel::FieldDefinition::Field.new Foo, :age,
+                                                   pattern: /\d{,2}/
+      expect(field.validable?).to be_truthy
+    end
+
+    it "returns false when both pattern and presence aren't set" do
+      field = CsvModel::FieldDefinition::Field.new Foo, :age,
+                                                   presence: false
+      expect(field.validable?).to be_falsy
+    end
+
+    it 'returns false when field is invalid' do
+      field = CsvModel::FieldDefinition::Field.new Foo, 'age'
+      expect(field.validable?).to be_falsy
+
+      field = CsvModel::FieldDefinition::Field.new nil, :age
+      expect(field.validable?).to be_falsy
+    end
+  end
+
+  describe '#value_valid?' do
+    it 'is truthy when it is validable and the value is present' do
+      field = CsvModel::FieldDefinition::Field.new Foo, :name
+      expect(field.value_valid?('Rafael Guerreiro')).to be_truthy
+    end
+
+    it 'is falsy when it is validable and the value is not present' do
+      field = CsvModel::FieldDefinition::Field.new Foo, :name
+      expect(field.value_valid?('   ')).to be_falsy
+      expect(field.value_valid?('')).to be_falsy
+      expect(field.value_valid?(nil)).to be_falsy
+    end
+
+    it 'is truthy when it is validable and the value follows the pattern' do
+      field = CsvModel::FieldDefinition::Field.new Foo, :name,
+                                                   pattern: /\Ael.*?ion\z/
+      expect(field.value_valid?('electrification')).to be_truthy
+      expect(field.value_valid?('elucidation')).to be_truthy
+      expect(field.value_valid?('elision')).to be_truthy
+      expect(field.value_valid?('eructation')).to be_falsy
+      expect(field.value_valid?(nil)).to be_falsy
+    end
+
+    it "is truthy when the value has a pattern but it's empty" do
+      field = CsvModel::FieldDefinition::Field.new Foo, :name,
+                                                   pattern: /\Ael.*?ion\z/,
+                                                   presence: false
+      expect(field.value_valid?('electrification')).to be_truthy
+      expect(field.value_valid?('elucidation')).to be_truthy
+      expect(field.value_valid?('elision')).to be_truthy
+      expect(field.value_valid?('eructation')).to be_falsy
+      expect(field.value_valid?(nil)).to be_truthy
     end
   end
 end

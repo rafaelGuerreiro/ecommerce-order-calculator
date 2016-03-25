@@ -20,7 +20,6 @@ module CsvModel
 
         define_attr_reader
         define_initialize
-        define_validity
       end
 
       def define_id_field(**options)
@@ -53,26 +52,6 @@ module CsvModel
 
       def fields_as_assignments
         @fields.map(&:to_assignment).join("\n")
-      end
-
-      def define_validity # rubocop:disable Metrics/MethodLength
-        fields = @fields.map(&:to_validity)
-                        .select(&:present?)
-                        .join("\n")
-
-        validity = %(
-          def valid?
-            result = true
-            #{fields}
-            result
-          end
-
-          def invalid?
-            !valid?
-          end
-        )
-
-        class_eval validity
       end
     end
 

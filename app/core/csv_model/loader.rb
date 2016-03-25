@@ -5,7 +5,7 @@ module CsvModel
         parser = CsvParser.new(self, file_path)
         models = parser.parse_csv
 
-        CsvModelRepository.persist(models) if models.present?
+        CsvModelRepository.persist(models)
       end
     end
 

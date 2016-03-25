@@ -139,12 +139,15 @@ describe CsvParser, :model do
     end
 
     it 'successfully parses when model has a string field' do
-      csv_data = "a name,an ignored field\nanother name,\n,\n , \n"
+      csv_data = "1,a name,an ignored field\n2,another name,\n,,\n0, , \n"
       file_path = 'a_csv_file.csv'
 
       stub_file file_path, csv_data
 
-      Foo.class_eval { define_field :name }
+      Foo.class_eval do
+        define_id_field
+        define_field :name
+      end
 
       models = CsvParser.new(Foo, file_path).parse_csv
 
