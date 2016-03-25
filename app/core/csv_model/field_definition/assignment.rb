@@ -9,6 +9,7 @@ module CsvModel
 
         assignment << date_assignment + space if @options[:type] == :date
         assignment << number_assignment + space if @options[:type] == :numeric
+        assignment << enum_assignment + space if @options[:type] == :enum
 
         assignment << "@#{@name} = #{@name}"
       end
@@ -37,6 +38,15 @@ module CsvModel
               end
             end
           rescue ArgumentError
+            #{@name} = nil
+          end)
+      end
+
+      def enum_assignment
+        %(
+          #{@name} = #{@name}.to_sym if #{@name}.is_a?(String)
+
+          unless self.class.options(:#{@name}, :enum).include?(#{name})
             #{@name} = nil
           end)
       end
