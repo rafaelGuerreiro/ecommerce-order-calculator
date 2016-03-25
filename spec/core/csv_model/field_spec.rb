@@ -1,63 +1,65 @@
-describe CsvModel::Field do
+describe CsvModel::FieldDefinition::Field do
   before do
     stub_const 'Foo', Class.new
   end
 
   describe '#to_argument' do
     it 'returns a required argument name when there is no default value' do
-      field = CsvModel::Field.new Foo, :name
+      field = CsvModel::FieldDefinition::Field.new Foo, :name
       expect(field.to_argument).to eq('name:')
     end
 
     it 'returns an argument with a value when there is default value' do
-      field = CsvModel::Field.new Foo, :is_abc, default: true
+      field = CsvModel::FieldDefinition::Field.new Foo, :is_abc, default: true
       expect(field.to_argument).to eq('is_abc: true')
     end
 
     it 'returns an optional argument when default value is defined as nil' do
-      field = CsvModel::Field.new Foo, :an_attribute, default: nil
+      field = CsvModel::FieldDefinition::Field.new Foo, :an_attribute,
+                                                   default: nil
       expect(field.to_argument).to eq('an_attribute: nil')
     end
 
     it 'returns an optional argument when default value is not defined '\
       'but it is not required' do
-      field = CsvModel::Field.new Foo, :an_attribute, presence: false
+      field = CsvModel::FieldDefinition::Field.new Foo, :an_attribute,
+                                                   presence: false
       expect(field.to_argument).to eq('an_attribute: nil')
     end
 
     it 'returns nil when field is invalid' do
-      field = CsvModel::Field.new nil, :attribute_xpto
+      field = CsvModel::FieldDefinition::Field.new nil, :attribute_xpto
       expect(field.to_argument).to be_nil
 
-      field = CsvModel::Field.new Foo, 'attribute_xpto'
+      field = CsvModel::FieldDefinition::Field.new Foo, 'attribute_xpto'
       expect(field.to_argument).to be_nil
     end
   end
 
   describe '#to_assignment' do
     it 'assigns the argument to its attribute' do
-      field = CsvModel::Field.new Foo, :name
+      field = CsvModel::FieldDefinition::Field.new Foo, :name
       expect(field.to_assignment).to eq('@name = name')
     end
 
     it 'returns nil when field is invalid' do
-      field = CsvModel::Field.new nil, :attribute_xpto
+      field = CsvModel::FieldDefinition::Field.new nil, :attribute_xpto
       expect(field.to_assignment).to be_nil
 
-      field = CsvModel::Field.new Foo, 'attribute_xpto'
+      field = CsvModel::FieldDefinition::Field.new Foo, 'attribute_xpto'
       expect(field.to_assignment).to be_nil
     end
   end
 
   describe '#options' do
     it 'is frozen' do
-      field = CsvModel::Field.new Foo, :name, presence: false
+      field = CsvModel::FieldDefinition::Field.new Foo, :name, presence: false
       expect { field.options[:presence] = true }
         .to raise_error(RuntimeError, "can't modify frozen Hash")
     end
 
     it 'has presence: true and type: :string as default' do
-      field = CsvModel::Field.new Foo, :name
+      field = CsvModel::FieldDefinition::Field.new Foo, :name
 
       expect(field.options[:presence]).to be_truthy
       expect(field.options[:type]).to be(:string)
@@ -67,7 +69,9 @@ describe CsvModel::Field do
     end
 
     it 'deletes unknown keys, keeping known ones' do
-      field = CsvModel::Field.new Foo, :name, presence: false, test: 'not ok'
+      field = CsvModel::FieldDefinition::Field.new Foo, :name,
+                                                   presence: false,
+                                                   test: 'not ok'
 
       expect(field.options.key?(:test)).to be_falsy
 
@@ -79,7 +83,7 @@ describe CsvModel::Field do
     end
 
     it 'sets the pattern when type is :numeric' do
-      field = CsvModel::Field.new Foo, :age, type: :numeric
+      field = CsvModel::FieldDefinition::Field.new Foo, :age, type: :numeric
 
       expect(field.options[:type]).to be(:numeric)
       expect(field.options[:pattern]).to_not be_nil
@@ -89,7 +93,7 @@ describe CsvModel::Field do
     end
 
     it 'sets the pattern when type is :date' do
-      field = CsvModel::Field.new Foo, :birthday, type: :date
+      field = CsvModel::FieldDefinition::Field.new Foo, :birthday, type: :date
 
       expect(field.options[:type]).to be(:date)
       expect(field.options[:pattern]).to_not be_nil
@@ -99,8 +103,8 @@ describe CsvModel::Field do
     end
 
     it 'sets the pattern when a enum is defined' do
-      field = CsvModel::Field.new Foo, :discount_type,
-                                  enum: [:absolute, :percent]
+      field = CsvModel::FieldDefinition::Field.new Foo, :discount_type,
+                                                   enum: [:absolute, :percent]
 
       expect(field.options[:type]).to be(:enum)
       expect(field.options[:pattern]).to_not be_nil
@@ -113,46 +117,47 @@ describe CsvModel::Field do
 
   describe '#valid?' do
     it 'is valid when class is a class and name is a symbol' do
-      field = CsvModel::Field.new Foo, nil
+      field = CsvModel::FieldDefinition::Field.new Foo, nil
       expect(field.valid?).to be_falsy
 
-      field = CsvModel::Field.new Foo, 'attribute'
+      field = CsvModel::FieldDefinition::Field.new Foo, 'attribute'
       expect(field.valid?).to be_falsy
 
-      field = CsvModel::Field.new Foo, :attribute
+      field = CsvModel::FieldDefinition::Field.new Foo, :attribute
       expect(field.valid?).to be_truthy
     end
   end
 
   describe '#invalid?' do
     it 'is invalid when class is not a class or name is not a symbol' do
-      field = CsvModel::Field.new Foo, nil
+      field = CsvModel::FieldDefinition::Field.new Foo, nil
       expect(field.invalid?).to be_truthy
 
-      field = CsvModel::Field.new Foo, 'attribute'
+      field = CsvModel::FieldDefinition::Field.new Foo, 'attribute'
       expect(field.invalid?).to be_truthy
 
-      field = CsvModel::Field.new Foo, :attribute
+      field = CsvModel::FieldDefinition::Field.new Foo, :attribute
       expect(field.invalid?).to be_falsy
     end
   end
 
   describe '#to_validity' do
     it 'checks presence by default' do
-      field = CsvModel::Field.new Foo, :attribute_xpto
+      field = CsvModel::FieldDefinition::Field.new Foo, :attribute_xpto
       expect(field.to_validity)
         .to eq("\nresult = @attribute_xpto.present? if result")
     end
 
     it 'checks nothing when presence is falsy' do
-      field = CsvModel::Field.new Foo, :attribute_xpto, presence: false
+      field = CsvModel::FieldDefinition::Field.new Foo, :attribute_xpto,
+                                                   presence: false
       expect(field.to_validity).to eq('')
     end
 
     it "checks the pattern when there's no presence but a pattern defined" do
-      field = CsvModel::Field.new Foo, :id,
-                                  presence: false,
-                                  pattern: /\A[0-9]+\z/
+      field = CsvModel::FieldDefinition::Field.new Foo, :id,
+                                                   presence: false,
+                                                   pattern: /\A[0-9]+\z/
 
       expect(field.to_validity)
         .to eq("\nresult = Regexp.new(\"(?-mix:\\\\A[0-9]+\\\\z)\")" \
@@ -161,7 +166,8 @@ describe CsvModel::Field do
 
     it 'checks both pattern and presence when presence is true ' \
       'and the pattern is set' do
-      field = CsvModel::Field.new Foo, :id, pattern: /\A[0-9]+\z/
+      field = CsvModel::FieldDefinition::Field.new Foo, :id,
+                                                   pattern: /\A[0-9]+\z/
 
       expect(field.to_validity)
         .to eq("\nresult = @id.present? if result" \
@@ -170,54 +176,56 @@ describe CsvModel::Field do
     end
 
     it 'returns nil when field is invalid' do
-      field = CsvModel::Field.new nil, :attribute_xpto
+      field = CsvModel::FieldDefinition::Field.new nil, :attribute_xpto
       expect(field.to_validity).to be_nil
 
-      field = CsvModel::Field.new Foo, 'attribute_xpto'
+      field = CsvModel::FieldDefinition::Field.new Foo, 'attribute_xpto'
       expect(field.to_validity).to be_nil
     end
   end
 
   describe '#to_attr_reader' do
     it 'delegates to attr_reader when it is not a date' do
-      field = CsvModel::Field.new Foo, :attribute_xpto, type: :numeric
+      field = CsvModel::FieldDefinition::Field.new Foo, :attribute_xpto,
+                                                   type: :numeric
       expect(field.to_attr_reader).to eq('attr_reader :attribute_xpto')
     end
 
     it 'converts a date to a date field' do
-      field = CsvModel::Field.new Foo, :birthday, type: :date
+      field = CsvModel::FieldDefinition::Field.new Foo, :birthday, type: :date
       expect(field.to_attr_reader)
         .to eq(%(
-          def birthday
-            return @birthday if @birthday.is_a? Date
+            def birthday
+              return @birthday if @birthday.is_a? Date
 
-            Date.strptime(@birthday, '%Y/%m/%d')
-          end
-        ))
+              Date.strptime(@birthday, '%Y/%m/%d')
+            end
+          ))
     end
   end
 
   describe '#hash' do
     it 'is the same for different instances with different options ' \
       'but same class and same field name' do
-      field1 = CsvModel::Field.new Foo, :id, pattern: /\A[0-9]+\z/
-      field2 = CsvModel::Field.new Foo, :id, presence: false
+      field1 = CsvModel::FieldDefinition::Field.new Foo, :id,
+                                                    pattern: /\A[0-9]+\z/
+      field2 = CsvModel::FieldDefinition::Field.new Foo, :id, presence: false
 
       expect(field1).not_to be(field2)
       expect(field1.hash).to eq(field2.hash)
     end
 
     it 'is different for different classes and same field name' do
-      field1 = CsvModel::Field.new String, :id
-      field2 = CsvModel::Field.new Foo, :id
+      field1 = CsvModel::FieldDefinition::Field.new String, :id
+      field2 = CsvModel::FieldDefinition::Field.new Foo, :id
 
       expect(field1).not_to be(field2)
       expect(field1.hash).not_to eq(field2.hash)
     end
 
     it 'is different for different field name and same class' do
-      field1 = CsvModel::Field.new Foo, :id
-      field2 = CsvModel::Field.new Foo, :name
+      field1 = CsvModel::FieldDefinition::Field.new Foo, :id
+      field2 = CsvModel::FieldDefinition::Field.new Foo, :name
 
       expect(field1).not_to be(field2)
       expect(field1.hash).not_to eq(field2.hash)
@@ -227,31 +235,32 @@ describe CsvModel::Field do
   describe '#==' do
     it 'is the same for different instances with different options ' \
       'but same class and same field name' do
-      field1 = CsvModel::Field.new Foo, :id, pattern: /\A[0-9]+\z/
-      field2 = CsvModel::Field.new Foo, :id, presence: false
+      field1 = CsvModel::FieldDefinition::Field.new Foo, :id,
+                                                    pattern: /\A[0-9]+\z/
+      field2 = CsvModel::FieldDefinition::Field.new Foo, :id, presence: false
 
       expect(field1).not_to be(field2)
       expect(field1).to eq(field2)
     end
 
     it 'is different for different classes and same field name' do
-      field1 = CsvModel::Field.new String, :id
-      field2 = CsvModel::Field.new Foo, :id
+      field1 = CsvModel::FieldDefinition::Field.new String, :id
+      field2 = CsvModel::FieldDefinition::Field.new Foo, :id
 
       expect(field1).not_to be(field2)
       expect(field1).not_to eq(field2)
     end
 
     it 'is different for different field name and same class' do
-      field1 = CsvModel::Field.new Foo, :id
-      field2 = CsvModel::Field.new Foo, :name
+      field1 = CsvModel::FieldDefinition::Field.new Foo, :id
+      field2 = CsvModel::FieldDefinition::Field.new Foo, :name
 
       expect(field1).not_to be(field2)
       expect(field1).not_to eq(field2)
     end
 
     it 'is equals to Strings with the same name of the field' do
-      field = CsvModel::Field.new Foo, :id
+      field = CsvModel::FieldDefinition::Field.new Foo, :id
 
       expect(field).not_to be('id')
       expect(field).to eq('id')
@@ -262,31 +271,32 @@ describe CsvModel::Field do
   describe '#eql?' do
     it 'is the same for different instances with different options ' \
       'but same class and same field name' do
-      field1 = CsvModel::Field.new Foo, :id, pattern: /\A[0-9]+\z/
-      field2 = CsvModel::Field.new Foo, :id, presence: false
+      field1 = CsvModel::FieldDefinition::Field.new Foo, :id,
+                                                    pattern: /\A[0-9]+\z/
+      field2 = CsvModel::FieldDefinition::Field.new Foo, :id, presence: false
 
       expect(field1).not_to be(field2)
       expect(field1).to eql(field2)
     end
 
     it 'is different for different classes and same field name' do
-      field1 = CsvModel::Field.new String, :id
-      field2 = CsvModel::Field.new Foo, :id
+      field1 = CsvModel::FieldDefinition::Field.new String, :id
+      field2 = CsvModel::FieldDefinition::Field.new Foo, :id
 
       expect(field1).not_to be(field2)
       expect(field1).not_to eql(field2)
     end
 
     it 'is different for different field name and same class' do
-      field1 = CsvModel::Field.new Foo, :id
-      field2 = CsvModel::Field.new Foo, :name
+      field1 = CsvModel::FieldDefinition::Field.new Foo, :id
+      field2 = CsvModel::FieldDefinition::Field.new Foo, :name
 
       expect(field1).not_to be(field2)
       expect(field1).not_to eql(field2)
     end
 
     it 'returns false for Strings with the same name of the field' do
-      field = CsvModel::Field.new Foo, :id
+      field = CsvModel::FieldDefinition::Field.new Foo, :id
 
       expect(field).not_to be('id')
       expect(field).to eq('id')

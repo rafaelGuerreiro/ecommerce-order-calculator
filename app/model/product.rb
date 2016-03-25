@@ -1,10 +1,4 @@
-class Product
-  attr_accessor :id, :price
-
-  def initialize(id:, price:)
-    return if id.nil? || price.nil?
-
-    @id = id.freeze
-    @price = price.freeze
-  end
+class Product < CsvModel::Base
+  define_id_field
+  define_field :value, type: :numeric
 end

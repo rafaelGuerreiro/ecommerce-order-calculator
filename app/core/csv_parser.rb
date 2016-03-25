@@ -1,4 +1,4 @@
-class Csv
+class CsvParser
   attr_accessor :file_path
 
   def initialize(file_path)

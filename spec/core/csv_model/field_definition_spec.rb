@@ -1,7 +1,6 @@
 describe CsvModel do
   before do
-    stub_const 'Foo', Class.new
-    Foo.class_eval { include CsvModel }
+    stub_const 'Foo', Class.new(CsvModel::Base)
   end
 
   describe '.define_field' do
@@ -10,7 +9,7 @@ describe CsvModel do
 
       foo = Foo.new name: 'Rafael Guerreiro'
 
-      expect(foo.is_a?(CsvModel)).to be_truthy
+      expect(foo.is_a?(CsvModel::Base)).to be_truthy
 
       expect(foo.name).to eq('Rafael Guerreiro')
       expect(foo.valid?).to be_truthy
@@ -95,6 +94,22 @@ describe CsvModel do
 
       expect(foo.valid?).to be_truthy
       expect(foo.invalid?).to be_falsy
+    end
+  end
+
+  describe '.define_id_field' do
+    it 'defines an standard id field' do
+      Foo.class_eval { define_id_field }
+
+      foo = Foo.new id: 1
+      expect(foo.id).to eq(1)
+    end
+
+    it 'allows options to be overriden' do
+      Foo.class_eval { define_id_field type: :string }
+
+      foo = Foo.new id: 'VAL01'
+      expect(foo.id).to eq('VAL01')
     end
   end
 end
