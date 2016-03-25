@@ -361,10 +361,9 @@ describe CsvModel::FieldDefinition::Field do
       field = CsvModel::FieldDefinition::Field.new Foo, :name,
                                                    pattern: /\Ael.*?ion\z/,
                                                    presence: false
-      expect(field.value_valid?('electrification')).to be_truthy
-      expect(field.value_valid?('elucidation')).to be_truthy
-      expect(field.value_valid?('elision')).to be_truthy
-      expect(field.value_valid?('eructation')).to be_falsy
+      expect(field.value_valid?('elicitation')).to be_truthy
+      expect(field.value_valid?('elimination')).to be_truthy
+      expect(field.value_valid?('emaciation')).to be_falsy
       expect(field.value_valid?(nil)).to be_truthy
     end
   end
