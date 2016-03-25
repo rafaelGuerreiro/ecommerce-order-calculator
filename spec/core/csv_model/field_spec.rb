@@ -104,14 +104,14 @@ describe CsvModel::FieldDefinition::Field do
       expect(field.options.keys).to include(:presence, :type, :pattern)
     end
 
-    it 'sets the pattern when type is :date' do
+    it 'does not set the pattern when type is :date' do
       field = CsvModel::FieldDefinition::Field.new Foo, :birthday, type: :date
 
       expect(field.options[:type]).to be(:date)
-      expect(field.options[:pattern]).to_not be_nil
+      expect(field.options[:pattern]).to be_nil
 
-      expect(field.options.keys).to have(3).keys
-      expect(field.options.keys).to include(:presence, :type, :pattern)
+      expect(field.options.keys).to have(2).keys
+      expect(field.options.keys).to include(:presence, :type)
     end
 
     it 'sets the pattern when an enum is defined' do
@@ -197,22 +197,15 @@ describe CsvModel::FieldDefinition::Field do
   end
 
   describe '#to_attr_reader' do
-    it 'delegates to attr_reader when it is not a date' do
+    it 'delegates to attr_reader' do
       field = CsvModel::FieldDefinition::Field.new Foo, :attribute_xpto,
                                                    type: :numeric
       expect(field.to_attr_reader).to eq('attr_reader :attribute_xpto')
     end
 
-    it 'converts a date to a date field' do
+    it 'delegates to attr_reader even when it is a date field' do
       field = CsvModel::FieldDefinition::Field.new Foo, :birthday, type: :date
-      expect(field.to_attr_reader)
-        .to eq(%(
-            def birthday
-              return @birthday if @birthday.is_a? Date
-
-              Date.strptime(@birthday, '%Y/%m/%d')
-            end
-          ))
+      expect(field.to_attr_reader).to eq('attr_reader :birthday')
     end
   end
 

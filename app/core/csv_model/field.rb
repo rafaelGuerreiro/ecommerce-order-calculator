@@ -1,6 +1,6 @@
 module CsvModel
   module FieldDefinition
-    class Field # rubocop:disable Metrics/ClassLength
+    class Field
       attr_reader :clazz, :name, :options
 
       def initialize(clazz, name, **options)
@@ -32,11 +32,15 @@ module CsvModel
 
         if @options[:type] == :date
           return %(
-            if #{@name}.is_a?(Date)
-              @#{@name} = #{@name}.strftime('%Y/%m/%d')
-            else
-              @#{@name} = #{@name}
+            begin
+              if #{@name}.is_a?(String)
+                #{@name} = Date.strptime(#{@name}, '%Y/%m/%d')
+              end
+            rescue ArgumentError
+              #{@name} = nil
             end
+
+            @#{@name} = #{@name}
           )
         end
 
@@ -61,16 +65,6 @@ module CsvModel
       end
 
       def to_attr_reader
-        if @options[:type] == :date
-          return %(
-            def #{@name}
-              return @#{@name} if @#{@name}.is_a? Date
-
-              Date.strptime(@#{@name}, '%Y/%m/%d')
-            end
-          )
-        end
-
         "attr_reader :#{@name}"
       end
 
@@ -130,12 +124,7 @@ module CsvModel
 
       def include_default_patterns(options)
         unless options[:pattern].present?
-          {
-            numeric: /\A\d*\.?\d+\z/,
-            date: %r(\A\d{4}\/\d{2}\/\d{2}\z)
-          }.each do |type, pattern|
-            options[:pattern] = pattern if options[:type] == type
-          end
+          options[:pattern] = /\A-?\d*\.?\d+\z/ if options[:type] == :numeric
         end
       end
 

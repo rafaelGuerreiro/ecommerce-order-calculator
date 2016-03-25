@@ -138,7 +138,7 @@ describe CsvParser, :model do
       expect(parser.parse_csv).to eq([])
     end
 
-    it 'successfully parses when csv is in expected format' do
+    it 'successfully parses when model has a string field' do
       csv_data = "a name,an ignored field\nanother name,\n,\n , \n"
       file_path = 'a_csv_file.csv'
 
@@ -153,11 +153,40 @@ describe CsvParser, :model do
       valid = models.select(&:valid?)
       invalid = models.select(&:invalid?)
 
-      expect(valid.map(&:name)).to include('a name', 'another name')
+      expect(valid.map(&:name)).to contain_exactly('a name', 'another name')
       expect(valid.count).to eq(2)
 
-      expect(invalid.map(&:name)).to include(nil, ' ')
+      expect(invalid.map(&:name)).to contain_exactly(nil, ' ')
       expect(invalid.count).to eq(2)
+    end
+
+    it 'successfully parses when model has id and a date field' do
+      csv_data = "a name,a field\n1,\n,\n , \n\n2,2015/12/25\n3,2000/13/12\n\n"
+      file_path = 'another_csv_file.csv'
+
+      stub_file file_path, csv_data
+
+      Foo.class_eval do
+        define_id_field
+        define_field :issued_at, type: :date
+      end
+
+      models = CsvParser.new(Foo, file_path).parse_csv
+
+      expect(models).to have(8).objects
+
+      valid = models.select(&:valid?)
+      invalid = models.select(&:invalid?)
+
+      expect(valid[0].id).to eq('2')
+      expect(valid[0].issued_at).to eq(Date.new(2015, 12, 25))
+      expect(valid.count).to eq(1)
+
+      expect(invalid.map(&:id))
+        .to include('a name', '1', nil, ' ', '3')
+      expect(invalid.map(&:issued_at).uniq)
+        .to contain_exactly(nil)
+      expect(invalid.count).to eq(7)
     end
 
     def stub_file(file_path, csv_data)
