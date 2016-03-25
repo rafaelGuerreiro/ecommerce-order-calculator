@@ -7,6 +7,10 @@ module CsvModel
 
         CsvModelRepository.persist(models)
       end
+
+      def find(id)
+        CsvModelRepository.find(self, id)
+      end
     end
 
     def self.included(base)

@@ -19,6 +19,13 @@ class CsvModelRepository
       saved
     end
 
+    def find(clazz, id)
+      return unless clazz < CsvModel::Base && id.present?
+
+      hash = @repository[clazz]
+      hash[id] if hash
+    end
+
     private
 
     def persist_index(id, model, saved)
