@@ -1,5 +1,3 @@
-require 'byebug'
-
 describe Coupon, :model do
   describe '.fields' do
     it 'returns the header used for parsing the csv' do
