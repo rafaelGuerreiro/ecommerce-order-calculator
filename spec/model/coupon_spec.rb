@@ -192,4 +192,46 @@ describe Coupon, :model do
       expect(coupon.calculate_discount(900)).to eq(900)
     end
   end
+
+  describe '#discount!' do
+    it 'subtracts 1 from the usage_limit' do
+      coupon = Coupon.new id: 12,
+                          value: 200,
+                          discount_type: :percent,
+                          expiration: Date.new + 1,
+                          usage_limit: 1
+
+      expect(coupon.expired?).to be_falsy
+
+      expect { coupon.discount! }.to change { coupon.usage_limit }.by(-1)
+
+      expect(coupon.expired?).to be_truthy
+    end
+
+    it 'does nothing when coupon is invalid' do
+      coupon = Coupon.new id: 12,
+                          value: 200,
+                          discount_type: :percentage,
+                          expiration: Date.new + 1,
+                          usage_limit: 1
+
+      expect(coupon.valid?).to be_falsy
+      expect(coupon.expired?).to be_falsy
+
+      expect { coupon.discount! }.to change { coupon.usage_limit }.by 0
+    end
+
+    it 'does nothing when coupon is expired' do
+      coupon = Coupon.new id: 12,
+                          value: 200,
+                          discount_type: :percent,
+                          expiration: Date.new + 1,
+                          usage_limit: 0
+
+      expect(coupon.valid?).to be_truthy
+      expect(coupon.expired?).to be_truthy
+
+      expect { coupon.discount! }.to change { coupon.usage_limit }.by 0
+    end
+  end
 end
