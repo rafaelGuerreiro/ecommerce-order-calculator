@@ -139,10 +139,16 @@ describe CsvParser, :model do
     end
 
     it 'successfully parses when model has a string field' do
-      csv_data = "1,a name,an ignored field\n2,another name,\n,,\n0, , \n"
+      csv_data = [
+        '1,a name,an ignored field',
+        '2,another name,',
+        ',,',
+        '0, , ',
+        ''
+      ]
       file_path = 'a_csv_file.csv'
 
-      stub_csv_file file_path, csv_data
+      stub_csv_file file_path, csv_data.join("\n")
 
       Foo.class_eval do
         define_id_field
@@ -164,10 +170,20 @@ describe CsvParser, :model do
     end
 
     it 'successfully parses when model has id and a date field' do
-      csv_data = "a name,a field\n1,\n,\n , \n\n2,2015/12/25\n3,2000/13/12\n\n"
+      csv_data = [
+        'a name,a field',
+        '1,',
+        ',',
+        ' , ',
+        '',
+        '2,2015/12/25',
+        '3,2000/13/12',
+        '',
+        ''
+      ]
       file_path = 'another_csv_file.csv'
 
-      stub_csv_file file_path, csv_data
+      stub_csv_file file_path, csv_data.join("\n")
 
       Foo.class_eval do
         define_id_field
