@@ -5,4 +5,8 @@ class Order < CsvModel::Base
   # define_field :products, has_many: Product,
   #                         through: OrderProduct,
   #                         presence: false
+
+  def products
+    OrderProduct.find_by(order: @id).map(&:product)
+  end
 end

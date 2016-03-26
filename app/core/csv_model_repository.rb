@@ -30,6 +30,13 @@ class CsvModelRepository
       @repository[model.class] && @repository[model.class].key?(model.id)
     end
 
+    def find_by(clazz, **criteria)
+      return [] unless clazz < CsvModel::Base && @repository[clazz]
+
+      @repository[clazz].select { |_, model| model.matches criteria }
+                        .values
+    end
+
     private
 
     def persist_index(id, model)

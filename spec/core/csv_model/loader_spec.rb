@@ -50,4 +50,56 @@ describe CsvModel::Loader do
       expect(foo.name).to eq('Foo')
     end
   end
+
+  describe '.find_by' do
+    before do
+      csv_data = "1,Foo,12\n2,,30\n\n1,Wrong,15\n2,Bar,15.5\n,,\n\n"
+      file_path = 'all_foos.csv'
+      stub_csv_file file_path, csv_data
+
+      Foo.load(file_path)
+    end
+
+    it 'fetches by attribute' do
+      expect(Foo.find_by(id: 2)).to have(1).element
+      expect(Foo.find_by(name: 'Bar', id: 2)).to have(1).element
+      expect(Foo.find_by(name: 'Wrong')).to eq([])
+    end
+  end
+
+  describe '.find_by_attribute' do
+    before do
+      csv_data = "1,Foo,12\n2,,30\n\n1,Wrong,15\n2,Bar,15.5\n,,\n\n"
+      file_path = 'all_foos.csv'
+      stub_csv_file file_path, csv_data
+
+      Foo.load(file_path)
+    end
+
+    it 'fetches by single attribute' do
+      expect(Foo.find_by_id(2)).to have(1).element
+      expect(Foo.find_by_name('Bar')).to have(1).element
+      expect(Foo.find_by_name('Wrong')).to eq([])
+    end
+
+    it 'fetches by multi attributes' do
+      expect(Foo.find_by_id_and_name(2, 'Bar')).to have(1).element
+      expect(Foo.find_by_name_and_price('Bar', 15.5)).to have(1).element
+      expect(Foo.find_by_name_and_id('Wrong', 2)).to eq([])
+    end
+
+    it 'responds to the find_by_attribute methods' do
+      expect(Foo.respond_to?(:find_by_id)).to be_truthy
+      expect(Foo.respond_to?(:find_by_price)).to be_truthy
+      expect(Foo.respond_to?(:find_by_name)).to be_truthy
+      expect(Foo.respond_to?(:find_by_attribute))
+        .to be_truthy
+
+      expect(Foo.respond_to?(:find_by_id_and_name)).to be_truthy
+      expect(Foo.respond_to?(:find_by_name_and_price)).to be_truthy
+      expect(Foo.respond_to?(:find_by_name_and_id)).to be_truthy
+      expect(Foo.respond_to?(:find_by_attribute_and_another_attribute))
+        .to be_truthy
+    end
+  end
 end
