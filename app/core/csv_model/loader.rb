@@ -48,6 +48,10 @@ module CsvModel
       def respond_to_missing?(method, *)
         method.to_s =~ /find_by_(\w+)/ || super
       end
+
+      def all
+        CsvModelRepository.all self
+      end
     end
 
     def self.included(base)

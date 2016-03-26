@@ -11,9 +11,13 @@ describe CsvModel::Loader do
 
   describe '.load' do
     it 'loads the csv, instantiates all models and persists them' do
-      csv_data = "1,Foo,12\n2,,30\n\n1,Wrong,15\n2,Bar,15.5\n,,\n\n"
+      csv_data = [
+        '1,Foo,12', '2,,30', '',
+        '1,Wrong,15', '2,Bar,15.5',
+        ',,', '', ''
+      ]
       file_path = 'all_foos.csv'
-      stub_csv_file file_path, csv_data
+      stub_csv_file file_path, csv_data.join("\n")
 
       foos = Foo.load(file_path)
 
@@ -32,9 +36,13 @@ describe CsvModel::Loader do
 
   describe '.find' do
     before do
-      csv_data = "1,Foo,12\n2,,30\n\n1,Wrong,15\n2,Bar,15.5\n,,\n\n"
+      csv_data = [
+        '1,Foo,12', '2,,30', '',
+        '1,Wrong,15', '2,Bar,15.5',
+        ',,', '', ''
+      ]
       file_path = 'all_foos.csv'
-      stub_csv_file file_path, csv_data
+      stub_csv_file file_path, csv_data.join("\n")
 
       Foo.load(file_path)
     end
@@ -53,9 +61,13 @@ describe CsvModel::Loader do
 
   describe '.find_by' do
     before do
-      csv_data = "1,Foo,12\n2,,30\n\n1,Wrong,15\n2,Bar,15.5\n,,\n\n"
+      csv_data = [
+        '1,Foo,12', '2,,30', '',
+        '1,Wrong,15', '2,Bar,15.5',
+        ',,', '', ''
+      ]
       file_path = 'all_foos.csv'
-      stub_csv_file file_path, csv_data
+      stub_csv_file file_path, csv_data.join("\n")
 
       Foo.load(file_path)
     end
@@ -69,9 +81,13 @@ describe CsvModel::Loader do
 
   describe '.find_by_attribute' do
     before do
-      csv_data = "1,Foo,12\n2,,30\n\n1,Wrong,15\n2,Bar,15.5\n,,\n\n"
+      csv_data = [
+        '1,Foo,12', '2,,30', '',
+        '1,Wrong,15', '2,Bar,15.5',
+        ',,', '', ''
+      ]
       file_path = 'all_foos.csv'
-      stub_csv_file file_path, csv_data
+      stub_csv_file file_path, csv_data.join("\n")
 
       Foo.load(file_path)
     end

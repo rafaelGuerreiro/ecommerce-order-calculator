@@ -25,8 +25,8 @@ class CsvModelRepository
     end
 
     def exist?(model)
-      if model.is_a?(Class) && model < CsvModel::Base
-        return @repository.key? model
+      if model.is_a?(Class)
+        return model < CsvModel::Base && @repository.key?(model)
       end
 
       return false unless model.is_a?(CsvModel::Base)
@@ -43,6 +43,12 @@ class CsvModelRepository
 
     def destroy!
       @repository = {}
+    end
+
+    def all(clazz)
+      return [] unless exist?(clazz)
+
+      @repository[clazz].values
     end
 
     private

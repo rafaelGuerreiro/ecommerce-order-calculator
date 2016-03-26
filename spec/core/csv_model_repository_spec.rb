@@ -1,6 +1,8 @@
 describe CsvModelRepository do
   before do
     stub_const 'Foo', Class.new(CsvModel::Base)
+
+    CsvModelRepository.destroy!
   end
 
   describe '.persist' do
@@ -96,6 +98,39 @@ describe CsvModelRepository do
 
       obj = CsvModelRepository.find(Bar, 1)
       expect(obj).to be_nil
+    end
+  end
+
+  describe '.all' do
+    before do
+      Foo.class_eval do
+        define_id_field
+        define_field :name
+      end
+
+      models = [
+        Foo.new(id: 1, name: 'Rafael'),
+        Foo.new(id: 3, name: 'Bob'),
+        Foo.new(id: 12, name: 'Alice'),
+        Foo.new(id: 2, name: 'Anna')
+      ]
+
+      CsvModelRepository.persist_all(models)
+    end
+
+    it 'returns all models from a class' do
+      foos = CsvModelRepository.all(Foo)
+
+      expect(foos).to have(4).elements
+    end
+
+    it 'must be returned in the same order that it was inserted' do
+      foos = CsvModelRepository.all(Foo)
+
+      expect(foos[0].id).to eq(1)
+      expect(foos[1].id).to eq(3)
+      expect(foos[2].id).to eq(12)
+      expect(foos[3].id).to eq(2)
     end
   end
 end
