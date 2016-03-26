@@ -1,5 +1,7 @@
 describe CsvModel::Loader do
   before do
+    CsvModelRepository.destroy!
+
     stub_const 'Foo', Class.new(CsvModel::Base)
 
     Foo.class_eval do
@@ -129,6 +131,30 @@ describe CsvModel::Loader do
         .to raise_error(NoMethodError)
       expect { Foo.by_name_and_id('Bar', 2) }.to raise_error(NoMethodError)
       expect { Foo.unknown_attribute }.to raise_error(NoMethodError)
+    end
+  end
+
+  describe '.all' do
+    before do
+      Foo.create(id: 4, name: 'Moringa', price: 70)
+      Foo.create(id: 3, name: 'Assolan', price: 1)
+      Foo.create(id: 2, name: 'Pasta de dente', price: 4.99)
+      Foo.create(id: 1, name: 'Chocolate', price: 15)
+    end
+
+    it 'returns all models from a class' do
+      foos = Foo.all
+
+      expect(foos).to have(4).elements
+    end
+
+    it 'must be returned in the same order that it was inserted' do
+      foos = Foo.all
+
+      expect(foos[0].id).to eq(4)
+      expect(foos[1].id).to eq(3)
+      expect(foos[2].id).to eq(2)
+      expect(foos[3].id).to eq(1)
     end
   end
 end
