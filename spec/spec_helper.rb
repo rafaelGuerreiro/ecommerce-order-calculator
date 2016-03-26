@@ -4,13 +4,12 @@ CodeClimate::TestReporter.start
 require 'rspec/collection_matchers'
 require 'active_support/core_ext/object/blank'
 
-require 'require_all'
-require_relative '../app'
+require_relative '../app/application'
 
 require_relative 'helper/stub_csv_file'
 
 RSpec.configure do |config|
-  config.include CsvFile::Helper
+  config.include CsvFileHelper
 
   config.expect_with :rspec do |expectations|
     # This option will default to `true` in RSpec 4. It makes the `description`
