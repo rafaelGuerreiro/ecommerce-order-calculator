@@ -208,6 +208,53 @@ describe Order, :model do
 
       expect(coupon.expired?).to be_falsy
     end
+
+    it 'applies coupon discount because there are 10 products ' \
+      'but a higher coupon' do
+      coupon = Coupon.create id: 12,
+                             value: 60,
+                             discount_type: :percent,
+                             expiration: Date.new + 1,
+                             usage_limit: 1
+
+      create_products order: 17,
+                      values: [
+                        12.5, 50, 75, 10, 15.5,
+                        80, 72, 49.90, 79.99, 99.99
+                      ]
+
+      obj = Order.new(id: 17, coupon: 12)
+
+      expect(coupon.expired?).to be_falsy
+
+      expect(obj.total).to eq(544.88)
+      expect(obj.total_with_discount).to eq(217.95)
+
+      expect(coupon.expired?).to be_truthy
+    end
+
+    it 'applies coupon discount and the order ends up being free' do
+      coupon = Coupon.create id: 12,
+                             value: 600,
+                             discount_type: :absolute,
+                             expiration: Date.new + 1,
+                             usage_limit: 1
+
+      create_products order: 17,
+                      values: [
+                        12.5, 50, 75, 10, 15.5,
+                        80, 72, 49.90, 79.99, 99.99
+                      ]
+
+      obj = Order.new(id: 17, coupon: 12)
+
+      expect(coupon.expired?).to be_falsy
+
+      expect(obj.total).to eq(544.88)
+      expect(obj.total_with_discount).to eq(0)
+
+      expect(coupon.expired?).to be_truthy
+    end
   end
 
   def create_products(order:, values: [])
