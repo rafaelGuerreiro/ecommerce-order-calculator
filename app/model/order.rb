@@ -3,6 +3,8 @@ class Order < CsvModel::Base
   define_field :coupon, references: Coupon, presence: false
 
   def products
-    @products ||= OrderProduct.find_by_order_id(@id).map(&:product)
+    return @products if @products.present?
+
+    @products = OrderProduct.find_by_order_id(@id).map(&:product)
   end
 end
