@@ -46,7 +46,7 @@ module CsvModel
 
       def define_attr_reader
         @fields.each_value do |field|
-          class_eval field.to_attr_reader
+          class_eval field.to_attr_reader if field.valid?
         end
       end
 

@@ -2,6 +2,7 @@ require_relative 'argument'
 require_relative 'assignment'
 require_relative 'enum'
 require_relative 'validator'
+require_relative 'reference'
 
 module CsvModel
   module FieldDefinition
@@ -10,6 +11,7 @@ module CsvModel
       include CsvModel::FieldDefinition::Assignment
       include CsvModel::FieldDefinition::Enum
       include CsvModel::FieldDefinition::Validator
+      include CsvModel::FieldDefinition::Reference
 
       attr_reader :clazz, :name, :options
 
@@ -28,6 +30,10 @@ module CsvModel
       end
 
       def to_attr_reader
+        return if invalid?
+
+        return to_reference_attr_reader if references?(@options[:references])
+
         "attr_reader :#{@name}"
       end
 
@@ -75,12 +81,16 @@ module CsvModel
       end
 
       def normalize_types(options)
-        options[:type] = :numeric if options[:references].is_a?(CsvModel::Base)
+        options[:type] = :numeric if references?(options[:references])
 
         if options[:enum].present?
           options[:type] = :enum
           options[:pattern] = Regexp.new("(#{options[:enum].join('|')})")
         end
+      end
+
+      def references?(target)
+        target.is_a?(Class) && target < CsvModel::Base
       end
     end
   end

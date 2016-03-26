@@ -2,7 +2,7 @@ module CsvModel
   module FieldDefinition
     module Enum
       def to_enumeration_checks
-        return '' unless @options[:enum].present?
+        return '' unless valid? && @options[:enum].present?
 
         methods = []
         @options[:enum].each do |enum|
