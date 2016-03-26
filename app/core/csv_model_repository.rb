@@ -41,12 +41,8 @@ class CsvModelRepository
                         .values
     end
 
-    def destroy!(clazz = nil)
-      if clazz
-        @repository[clazz] = {} if exist?(clazz)
-      else
-        @repository = {}
-      end
+    def destroy!
+      @repository = {}
     end
 
     private
