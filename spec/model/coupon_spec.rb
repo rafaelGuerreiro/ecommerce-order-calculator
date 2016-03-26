@@ -117,4 +117,59 @@ describe Coupon, :model do
       expect(coupon.percent?).to be_falsy
     end
   end
+
+  describe '#calculate_discount' do
+    it 'returns 0 when coupon is invalid' do
+      coupon = Coupon.new id: 'aa',
+                          value: 15,
+                          discount_type: :percent,
+                          expiration: Date.new + 1,
+                          usage_limit: 2
+
+      expect(coupon.calculate_discount([1, 2, 3, 4])).to eq(0)
+      expect(coupon.invalid?).to be_truthy
+    end
+
+    it 'returns 0 when coupon is expired' do
+      coupon = Coupon.new id: 12,
+                          value: 15,
+                          discount_type: :percent,
+                          expiration: Date.new - 1,
+                          usage_limit: 2
+
+      expect(coupon.calculate_discount([1, 2, 3, 4])).to eq(0)
+      expect(coupon.valid?).to be_truthy
+      expect(coupon.expired?).to be_truthy
+
+      coupon = Coupon.new id: 12,
+                          value: 15,
+                          discount_type: :percent,
+                          expiration: Date.new + 1,
+                          usage_limit: 0
+
+      expect(coupon.calculate_discount([1, 2, 3, 4])).to eq(0)
+      expect(coupon.valid?).to be_truthy
+      expect(coupon.expired?).to be_truthy
+    end
+
+    it 'returns value % off when discount_type is :percent' do
+      coupon = Coupon.new id: 12,
+                          value: 20,
+                          discount_type: :percent,
+                          expiration: Date.new + 1,
+                          usage_limit: 1
+
+      expect(coupon.calculate_discount([10, 20, 30])).to eq(48)
+    end
+
+    it 'substracts value when discount_type is :absolute' do
+      coupon = Coupon.new id: 12,
+                          value: 50,
+                          discount_type: :absolute,
+                          expiration: Date.new + 1,
+                          usage_limit: 1
+
+      expect(coupon.calculate_discount([20, 30, 40])).to eq(40)
+    end
+  end
 end

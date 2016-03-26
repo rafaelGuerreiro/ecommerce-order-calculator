@@ -16,4 +16,15 @@ class Coupon < CsvModel::Base
 
     !expired?
   end
+
+  def calculate_discount(prices)
+    return 0 if expired? || invalid?
+
+    discount = prices.reduce(0, :+)
+
+    discount -= @value if absolute?
+    discount *= (1.0 - (@value / 100.0)) if percent?
+
+    discount
+  end
 end
