@@ -36,7 +36,7 @@ module CsvModel
       end
 
       def method_missing(method, *args, &block)
-        if method.to_s =~ /find_by_(\w+)/ # method_matches?(method)
+        if method.to_s =~ /find_by_(\w+)/
           attributes = Regexp.last_match[1].split(/_and_/)
 
           hash = Hash[*attributes.zip(args).flatten].symbolize_keys
@@ -47,14 +47,7 @@ module CsvModel
       end
 
       def respond_to_missing?(method, *)
-        # method_matches?(method) || super
         method.to_s =~ /find_by_(\w+)/ || super
-      end
-
-      private
-
-      def method_matches?(method)
-        method.to_s =~ /find_by_(\w+)/
       end
     end
 

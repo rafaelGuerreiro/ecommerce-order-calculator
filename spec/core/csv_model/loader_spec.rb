@@ -101,5 +101,18 @@ describe CsvModel::Loader do
       expect(Foo.respond_to?(:find_by_attribute_and_another_attribute))
         .to be_truthy
     end
+
+    it "delegates to super when the method doesn't start with 'find_by'" do
+      expect(Foo.respond_to?(:find_id)).to be_falsy
+      expect(Foo.respond_to?(:find_bu_name_and_price)).to be_falsy
+      expect(Foo.respond_to?(:by_name_and_id)).to be_falsy
+      expect(Foo.respond_to?(:unknown_attribute)).to be_falsy
+
+      expect { Foo.find_id(2) }.to raise_error(NoMethodError)
+      expect { Foo.find_bu_name_and_price('Bar', 15.5) }
+        .to raise_error(NoMethodError)
+      expect { Foo.by_name_and_id('Bar', 2) }.to raise_error(NoMethodError)
+      expect { Foo.unknown_attribute }.to raise_error(NoMethodError)
+    end
   end
 end
