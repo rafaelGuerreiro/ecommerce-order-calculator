@@ -255,11 +255,36 @@ describe Order, :model do
 
       expect(coupon.expired?).to be_truthy
     end
+
+    it 'uses the coupon only once before it expires' do
+      coupon = Coupon.create id: 12,
+                             value: 30,
+                             discount_type: :percent,
+                             expiration: Date.new + 1,
+                             usage_limit: 1
+
+      create_products order: 17, values: [12.5, 50, 75, 10, 15.5]
+      obj = Order.new(id: 17, coupon: 12)
+
+      expect(coupon.expired?).to be_falsy
+
+      expect(obj.total).to eq(163)
+      expect(obj.total_with_discount).to eq(114.10)
+
+      expect(coupon.expired?).to be_truthy
+
+      create_products order: 13, values: [25, 88, 110, 99.99]
+      obj = Order.new(id: 13, coupon: 12)
+
+      expect(obj.total).to eq(322.99)
+      expect(obj.total_with_discount).to_not eq(226.09)
+      expect(obj.total_with_discount).to eq(258.39)
+    end
   end
 
   def create_products(order:, values: [])
     values.each_with_index do |value, index|
-      create_product(order: order, product: index, value: value)
+      create_product(order: order, product: (order * (index + 1)), value: value)
     end
   end
 
