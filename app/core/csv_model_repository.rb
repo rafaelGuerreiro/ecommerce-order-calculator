@@ -25,16 +25,28 @@ class CsvModelRepository
     end
 
     def exist?(model)
+      if model.is_a?(Class) && model < CsvModel::Base
+        return @repository.key? model
+      end
+
       return false unless model.is_a?(CsvModel::Base)
 
-      @repository[model.class] && @repository[model.class].key?(model.id)
+      exist?(model.class) && @repository[model.class].key?(model.id)
     end
 
     def find_by(clazz, **criteria)
-      return [] unless clazz < CsvModel::Base && @repository[clazz]
+      return [] unless exist?(clazz)
 
       @repository[clazz].select { |_, model| model.matches criteria }
                         .values
+    end
+
+    def destroy!(clazz = nil)
+      if clazz
+        @repository[clazz] = {} if exist?(clazz)
+      else
+        @repository = {}
+      end
     end
 
     private

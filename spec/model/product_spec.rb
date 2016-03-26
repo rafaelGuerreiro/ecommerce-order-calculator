@@ -1,4 +1,8 @@
 describe Product, :model do
+  before do
+    CsvModelRepository.destroy!
+  end
+
   describe '.fields' do
     it 'returns the header used for parsing the csv' do
       fields = Product.fields
@@ -12,21 +16,10 @@ describe Product, :model do
   describe '.load' do
     before do
       csv_data = [
-        '123,150.0',
-        '234,225.0',
-        '345,250.0',
-        '456,175.0',
-        '567,100.0',
-        '678,80.0',
-        '789,2400.0',
-        '890,75.0',
-        '987,100.0',
-        '876,120.0',
-        ',',
-        '123,',
-        ',',
-        ',',
-        ','
+        '123,150.0', '234,225.0', '345,250.0',
+        '456,175.0', '567,100.0', '678,80.0',
+        '789,2400.0', '890,75.0', '987,100.0',
+        '876,120.0', ',', '123,', ',', ',', ','
       ]
       file_path = 'products.csv'
       stub_csv_file file_path, csv_data.join("\n")

@@ -1,4 +1,8 @@
 describe OrderProduct, :model do
+  before do
+    CsvModelRepository.destroy!
+  end
+
   describe '.fields' do
     it 'returns the header used for parsing the csv' do
       fields = OrderProduct.fields
@@ -12,24 +16,12 @@ describe OrderProduct, :model do
   describe '.load' do
     before do
       csv_data = [
-        '123,789',
-        '123,987',
-        '234,678',
-        '234,890',
-        '234,987',
-        '345,345',
-        '345,876',
-        '456,234',
-        '456,234',
-        '456,345',
-        '567,123',
-        '567,234',
-        '567,876',
-        '567,890',
-        '567,678',
-        '567,567',
-        '678,789',
-        '678,789',
+        '123,789', '123,987', '234,678',
+        '234,890', '234,987', '345,345',
+        '345,876', '456,234', '456,234',
+        '456,345', '567,123', '567,234',
+        '567,876', '567,890', '567,678',
+        '567,567', '678,789', '678,789',
         '678,890'
       ]
       file_path = 'order_products.csv'

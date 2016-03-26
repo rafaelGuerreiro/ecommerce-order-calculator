@@ -5,6 +5,6 @@ class Order < CsvModel::Base
   def products
     return @products if @products.present?
 
-    @products = OrderProduct.find_by_order_id(@id).map(&:product)
+    @products = OrderProduct.find_by_order_id(@id).map(&:product).compact
   end
 end

@@ -1,4 +1,8 @@
 describe Order, :model do
+  before do
+    CsvModelRepository.destroy!
+  end
+
   describe '.fields' do
     it 'returns the header used for parsing the csv' do
       fields = Order.fields
@@ -12,18 +16,10 @@ describe Order, :model do
   describe '.load' do
     before do
       csv_data = [
-        '123,',
-        '234,123',
-        '345,234',
-        '456,345',
-        '567,456',
-        '678,567',
-        '1000,567',
-        '567,',
-        ',123',
-        ',',
-        ' , ',
-        ','
+        '123,', '234,123', '345,234',
+        '456,345', '567,456', '678,567',
+        '1000,567', '567,', ',123',
+        ',', ' , ', ','
       ]
       file_path = 'orders.csv'
       stub_csv_file file_path, csv_data.join("\n")
@@ -80,6 +76,15 @@ describe Order, :model do
       expect(obj.coupon).to_not be_nil
       expect(obj.coupon.id).to eq(125)
       expect(obj.coupon.expired?).to be_truthy
+    end
+
+    it 'is optional, thus the order is valid without coupon' do
+      obj = Order.new(id: 16)
+
+      expect(obj.id).to eq(16)
+      expect(obj.valid?).to be_truthy
+      expect(obj.coupon_id).to be_nil
+      expect(obj.coupon).to be_nil
     end
   end
 end

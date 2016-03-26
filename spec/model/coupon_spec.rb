@@ -1,4 +1,8 @@
 describe Coupon, :model do
+  before do
+    CsvModelRepository.destroy!
+  end
+
   describe '.fields' do
     it 'returns the header used for parsing the csv' do
       fields = Coupon.fields
@@ -124,7 +128,7 @@ describe Coupon, :model do
                           expiration: Date.new + 1,
                           usage_limit: 2
 
-      expect(coupon.calculate_discount([1, 2, 3, 4])).to eq(0)
+      expect(coupon.calculate_discount(10)).to eq(0)
       expect(coupon.invalid?).to be_truthy
     end
 
@@ -135,7 +139,7 @@ describe Coupon, :model do
                           expiration: Date.new - 1,
                           usage_limit: 2
 
-      expect(coupon.calculate_discount([1, 2, 3, 4])).to eq(0)
+      expect(coupon.calculate_discount(10)).to eq(0)
       expect(coupon.valid?).to be_truthy
       expect(coupon.expired?).to be_truthy
 
@@ -145,7 +149,7 @@ describe Coupon, :model do
                           expiration: Date.new + 1,
                           usage_limit: 0
 
-      expect(coupon.calculate_discount([1, 2, 3, 4])).to eq(0)
+      expect(coupon.calculate_discount(10)).to eq(0)
       expect(coupon.valid?).to be_truthy
       expect(coupon.expired?).to be_truthy
     end
@@ -157,7 +161,7 @@ describe Coupon, :model do
                           expiration: Date.new + 1,
                           usage_limit: 1
 
-      expect(coupon.calculate_discount([10, 20, 30])).to eq(48)
+      expect(coupon.calculate_discount(60)).to eq(12)
     end
 
     it 'substracts value when discount_type is :absolute' do
@@ -167,7 +171,25 @@ describe Coupon, :model do
                           expiration: Date.new + 1,
                           usage_limit: 1
 
-      expect(coupon.calculate_discount([20, 30, 40])).to eq(40)
+      expect(coupon.calculate_discount(90)).to eq(50)
+    end
+
+    it 'never surpasses the given total' do
+      coupon = Coupon.new id: 12,
+                          value: 100,
+                          discount_type: :absolute,
+                          expiration: Date.new + 1,
+                          usage_limit: 1
+
+      expect(coupon.calculate_discount(90)).to eq(90)
+
+      coupon = Coupon.new id: 12,
+                          value: 200,
+                          discount_type: :percent,
+                          expiration: Date.new + 1,
+                          usage_limit: 1
+
+      expect(coupon.calculate_discount(900)).to eq(900)
     end
   end
 end
