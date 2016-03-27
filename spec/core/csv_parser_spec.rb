@@ -37,7 +37,7 @@ describe CsvParser do
       ]
       file_path = 'a_csv_file.csv'
 
-      stub_csv_file file_path, csv_data
+      stub_csv_file(file_path: file_path, csv_data: csv_data)
 
       Foo.class_eval do
         define_id_field
@@ -72,7 +72,7 @@ describe CsvParser do
       ]
       file_path = 'another_csv_file.csv'
 
-      stub_csv_file file_path, csv_data
+      stub_csv_file(file_path: file_path, csv_data: csv_data)
 
       Foo.class_eval do
         define_id_field

@@ -23,7 +23,7 @@ class Application
     @files.each do |clazz, file_path|
       if clazz.is_a?(Class) && clazz < CsvModel::Base
         clazz.load(file_path)
-        puts "Loaded #{clazz} from #{file_path}"
+        yield(clazz, file_path) if block_given?
       end
     end
   end
@@ -33,6 +33,6 @@ class Application
       [order.id, order.total_with_discount]
     end
 
-    puts "Finished dumping orders into #{@files[:result]}"
+    yield @files[:result] if block_given?
   end
 end

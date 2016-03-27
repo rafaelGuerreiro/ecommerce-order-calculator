@@ -24,7 +24,7 @@ describe Coupon, :model do
         '123,30,percent,2020/12/25,1'
       ]
       file_path = 'coupons.csv'
-      stub_csv_file file_path, csv_data
+      stub_csv_file(file_path: file_path, csv_data: csv_data)
     end
 
     it 'loads all valid coupons' do

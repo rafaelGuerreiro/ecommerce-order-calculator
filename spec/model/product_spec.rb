@@ -18,7 +18,7 @@ describe Product, :model do
         '876,120.0', ',', '123,', ',', ',', ','
       ]
       file_path = 'products.csv'
-      stub_csv_file file_path, csv_data
+      stub_csv_file(file_path: file_path, csv_data: csv_data)
     end
 
     it 'loads all valid products' do

@@ -1,10 +1,11 @@
 module CsvFileHelper
-  def stub_csv_file(file_path, csv_data)
+  # def stub_csv_file(file_path, csv_data)
+  def stub_csv_file(*configurations)
     allow_call_original(CSV => :read, File => :exist?)
 
-    allow(File).to receive(:exist?).with(file_path).and_return(true)
-    allow(CSV).to receive(:read).with(file_path)
-      .and_return(csv_data.map { |row| row.split(',') })
+    configurations.each do |config|
+      stub_csv_reading_file config
+    end
   end
 
   def stub_csv_writing_target(file_path, target = [])
@@ -23,5 +24,11 @@ module CsvFileHelper
     hash.each do |clazz, method|
       allow(clazz).to receive(method).and_call_original
     end
+  end
+
+  def stub_csv_reading_file(config)
+    allow(File).to receive(:exist?).with(config[:file_path]).and_return(true)
+    allow(CSV).to receive(:read).with(config[:file_path])
+      .and_return(config[:csv_data].map { |row| row.split(',') })
   end
 end

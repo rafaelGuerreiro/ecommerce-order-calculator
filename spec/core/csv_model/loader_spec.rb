@@ -17,7 +17,7 @@ describe CsvModel::Loader do
         ',,', '', ''
       ]
       file_path = 'all_products.csv'
-      stub_csv_file file_path, csv_data
+      stub_csv_file(file_path: file_path, csv_data: csv_data)
 
       products = Product.load(file_path)
 
@@ -42,7 +42,7 @@ describe CsvModel::Loader do
         ',,', '', ''
       ]
       file_path = 'all_products.csv'
-      stub_csv_file file_path, csv_data
+      stub_csv_file(file_path: file_path, csv_data: csv_data)
 
       Product.load(file_path)
     end
@@ -67,7 +67,7 @@ describe CsvModel::Loader do
         ',,', '', ''
       ]
       file_path = 'all_products.csv'
-      stub_csv_file file_path, csv_data
+      stub_csv_file(file_path: file_path, csv_data: csv_data)
 
       Product.load(file_path)
     end
@@ -87,7 +87,7 @@ describe CsvModel::Loader do
         ',,', '', ''
       ]
       file_path = 'all_products.csv'
-      stub_csv_file file_path, csv_data
+      stub_csv_file(file_path: file_path, csv_data: csv_data)
 
       Product.load(file_path)
     end
