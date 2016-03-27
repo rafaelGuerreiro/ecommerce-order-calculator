@@ -2,6 +2,7 @@ require_relative 'csv_model/field_definition'
 require_relative 'csv_model/loader'
 require_relative 'csv_model/persist'
 require_relative 'csv_model/file_dump'
+require_relative 'csv_model/iterable'
 
 module CsvModel
   class Base
@@ -9,6 +10,7 @@ module CsvModel
     include CsvModel::Loader
     include CsvModel::Persist
     include CsvModel::FileDump
+    include CsvModel::Iterable
 
     def valid?
       return false unless respond_to? :id
@@ -22,18 +24,6 @@ module CsvModel
 
     def invalid?
       !valid?
-    end
-
-    module ClassMethods
-      include Enumerable
-
-      def each(&block)
-        all.each(&block)
-      end
-    end
-
-    def self.included(base)
-      base.extend ClassMethods
     end
 
     private

@@ -2,3 +2,5 @@ Documentation:
   Enabled: false
 AllCops:
   TargetRubyVersion: 2.1
+Style/BracesAroundHashParameters:
+  EnforcedStyle: context_dependent
