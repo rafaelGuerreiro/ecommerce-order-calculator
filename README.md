@@ -7,7 +7,7 @@
 
 ##Important note
 
-this software is supposed to run on ruby >= 2.1
+**This software is supposed to run on ruby >= 2.1**
 
 ###Installing
 
@@ -33,7 +33,7 @@ git clone https://github.com/rafaelGuerreiro/ecommerce-order-calculator.git
 ```
 You can also run the above command using relative paths.
 
-So, if you placed the `ecommerce-order-calculator` in your Desktop as well it would be like this:
+So, if you placed the `ecommerce-order-calculator` in your Desktop as well, it would be like this:
 ```
 ./app.rb ../coupons ../products.csv ../orders ../order_items.csv ../result
 ```
