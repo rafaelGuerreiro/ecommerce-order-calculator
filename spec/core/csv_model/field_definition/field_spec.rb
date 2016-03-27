@@ -70,26 +70,26 @@ describe CsvModel::FieldDefinition::Field do
   describe '#valid?' do
     it 'is valid when class is a class and name is a symbol' do
       field = CsvModel::FieldDefinition::Field.new Foo, nil
-      expect(field.valid?).to be_falsy
+      expect(field).to_not be_valid
 
       field = CsvModel::FieldDefinition::Field.new Foo, 'attribute'
-      expect(field.valid?).to be_falsy
+      expect(field).to_not be_valid
 
       field = CsvModel::FieldDefinition::Field.new Foo, :attribute
-      expect(field.valid?).to be_truthy
+      expect(field).to be_valid
     end
   end
 
   describe '#invalid?' do
     it 'is invalid when class is not a class or name is not a symbol' do
       field = CsvModel::FieldDefinition::Field.new Foo, nil
-      expect(field.invalid?).to be_truthy
+      expect(field).to be_invalid
 
       field = CsvModel::FieldDefinition::Field.new Foo, 'attribute'
-      expect(field.invalid?).to be_truthy
+      expect(field).to be_invalid
 
       field = CsvModel::FieldDefinition::Field.new Foo, :attribute
-      expect(field.invalid?).to be_falsy
+      expect(field).to_not be_invalid
     end
   end
 

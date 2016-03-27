@@ -129,7 +129,7 @@ describe Coupon, :model do
                           usage_limit: 2
 
       expect(coupon.calculate_discount(10)).to eq(0)
-      expect(coupon.invalid?).to be_truthy
+      expect(coupon).to be_invalid
     end
 
     it 'returns 0 when coupon is expired' do
@@ -140,7 +140,7 @@ describe Coupon, :model do
                           usage_limit: 2
 
       expect(coupon.calculate_discount(10)).to eq(0)
-      expect(coupon.valid?).to be_truthy
+      expect(coupon).to be_valid
       expect(coupon.expired?).to be_truthy
 
       coupon = Coupon.new id: 12,
@@ -150,7 +150,7 @@ describe Coupon, :model do
                           usage_limit: 0
 
       expect(coupon.calculate_discount(10)).to eq(0)
-      expect(coupon.valid?).to be_truthy
+      expect(coupon).to be_valid
       expect(coupon.expired?).to be_truthy
     end
 
@@ -215,7 +215,7 @@ describe Coupon, :model do
                           expiration: Date.new + 1,
                           usage_limit: 1
 
-      expect(coupon.valid?).to be_falsy
+      expect(coupon).to_not be_valid
       expect(coupon.expired?).to be_falsy
 
       expect { coupon.discount! }.to change { coupon.usage_limit }.by 0
@@ -228,7 +228,7 @@ describe Coupon, :model do
                           expiration: Date.new + 1,
                           usage_limit: 0
 
-      expect(coupon.valid?).to be_truthy
+      expect(coupon).to be_valid
       expect(coupon.expired?).to be_truthy
 
       expect { coupon.discount! }.to change { coupon.usage_limit }.by 0

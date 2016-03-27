@@ -61,56 +61,56 @@ describe CsvFile do
   describe '#valid?' do
     it 'returns true when the model class and the file path is present' do
       parser = CsvFile.new(Foo, ' ../folder/a.file.csv   ')
-      expect(parser.valid?).to be_truthy
+      expect(parser).to be_valid
 
       parser = CsvFile.new(Foo, ' ../folder/a.file   ')
-      expect(parser.valid?).to be_truthy
+      expect(parser).to be_valid
     end
 
     it 'returns false when the file path is not present' do
       parser = CsvFile.new(Foo, nil)
-      expect(parser.valid?).to be_falsy
+      expect(parser).to_not be_valid
 
       parser = CsvFile.new(Foo, '')
-      expect(parser.valid?).to be_falsy
+      expect(parser).to_not be_valid
 
       parser = CsvFile.new(Foo, '    ')
-      expect(parser.valid?).to be_falsy
+      expect(parser).to_not be_valid
 
       parser = CsvFile.new(Foo, "  \n  ")
-      expect(parser.valid?).to be_falsy
+      expect(parser).to_not be_valid
     end
 
     it 'returns false when class does not extend CsvModel::Base' do
       parser = CsvFile.new(nil, '../folder/csv_file')
-      expect(parser.valid?).to be_falsy
+      expect(parser).to_not be_valid
 
       parser = CsvFile.new(String, '../folder/csv_file')
-      expect(parser.valid?).to be_falsy
+      expect(parser).to_not be_valid
 
       parser = CsvFile.new(CsvModel::Base, '../folder/csv_file')
-      expect(parser.valid?).to be_falsy
+      expect(parser).to_not be_valid
     end
   end
 
   describe '#invalid?' do
     it 'returns false when the file path is present' do
       parser = CsvFile.new(Foo, ' ../folder/a.file.csv   ')
-      expect(parser.invalid?).to be_falsy
+      expect(parser).to_not be_invalid
 
       parser = CsvFile.new(Foo, ' ../folder/a.file   ')
-      expect(parser.invalid?).to be_falsy
+      expect(parser).to_not be_invalid
     end
 
     it 'returns true when the file path is not present' do
       parser = CsvFile.new(Foo, nil)
-      expect(parser.invalid?).to be_truthy
+      expect(parser).to be_invalid
 
       parser = CsvFile.new(Foo, '')
-      expect(parser.invalid?).to be_truthy
+      expect(parser).to be_invalid
 
       parser = CsvFile.new(Foo, '    ')
-      expect(parser.invalid?).to be_truthy
+      expect(parser).to be_invalid
     end
   end
 end

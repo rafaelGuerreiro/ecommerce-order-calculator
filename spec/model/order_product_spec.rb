@@ -47,12 +47,12 @@ describe OrderProduct, :model do
     it 'returns null when order_product is invalid' do
       obj = OrderProduct.new(order: 12, product: 'as')
       expect(obj.id).to be_nil
-      expect(obj.invalid?).to be_truthy
+      expect(obj).to be_invalid
       expect(obj.order_id).to eq(12)
 
       obj = OrderProduct.new(order: 'a', product: 15)
       expect(obj.id).to be_nil
-      expect(obj.invalid?).to be_truthy
+      expect(obj).to be_invalid
       expect(obj.product_id).to eq(15)
     end
   end

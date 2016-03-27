@@ -5,14 +5,14 @@ describe CsvModel::Base do
 
   describe '#valid?' do
     it 'class must respond to :id' do
-      expect(Person.new.valid?).to be_falsy
+      expect(Person.new).to_not be_valid
       Person.class_eval do
         def id
           1
         end
       end
 
-      expect(Person.new.valid?).to be_truthy
+      expect(Person.new).to be_valid
     end
 
     it 'iterates over all validable fields to validate the object' do
@@ -23,26 +23,26 @@ describe CsvModel::Base do
       end
 
       bob = Person.new id: 12, name: 'Bob'
-      expect(bob.valid?).to be_truthy
+      expect(bob).to be_valid
 
       anna = Person.new name: 'Anna', age: 25
-      expect(anna.valid?).to be_falsy
+      expect(anna).to_not be_valid
 
       obj = Person.new id: 3, name: '', age: 20
-      expect(obj.valid?).to be_falsy
+      expect(obj).to_not be_valid
     end
   end
 
   describe '#invalid?' do
     it 'class must respond to :id' do
-      expect(Person.new.invalid?).to be_truthy
+      expect(Person.new).to be_invalid
       Person.class_eval do
         def id
           1
         end
       end
 
-      expect(Person.new.invalid?).to be_falsy
+      expect(Person.new).to_not be_invalid
     end
 
     it 'iterates over all validable fields to validate the object' do
@@ -53,13 +53,13 @@ describe CsvModel::Base do
       end
 
       bob = Person.new id: 12, name: 'Bob'
-      expect(bob.invalid?).to be_falsy
+      expect(bob).to_not be_invalid
 
       anna = Person.new name: 'Anna', age: 25
-      expect(anna.invalid?).to be_truthy
+      expect(anna).to be_invalid
 
       obj = Person.new id: 3, name: '', age: 20
-      expect(obj.invalid?).to be_truthy
+      expect(obj).to be_invalid
     end
   end
 end

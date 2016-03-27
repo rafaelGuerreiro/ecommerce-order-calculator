@@ -16,8 +16,8 @@ describe CsvModel::FieldDefinition do
 
       expect(foo.id).to eq(1)
       expect(foo.name).to eq('Rafael Guerreiro')
-      expect(foo.valid?).to be_truthy
-      expect(foo.invalid?).to be_falsy
+      expect(foo).to be_valid
+      expect(foo).to_not be_invalid
     end
 
     it 'defines various fields and append them to validity' do
@@ -32,8 +32,8 @@ describe CsvModel::FieldDefinition do
       expect(foo.id).to eq(120)
       expect(foo.name).to eq('Rafael Guerreiro')
       expect(foo.age).to eq(23)
-      expect(foo.valid?).to be_truthy
-      expect(foo.invalid?).to be_falsy
+      expect(foo).to be_valid
+      expect(foo).to_not be_invalid
     end
 
     it 'properly add validation for numeric fields' do
@@ -44,23 +44,23 @@ describe CsvModel::FieldDefinition do
 
       foo = Foo.new id: 1, number: 55
       expect(foo.number).to eq(55)
-      expect(foo.valid?).to be_truthy
-      expect(foo.invalid?).to be_falsy
+      expect(foo).to be_valid
+      expect(foo).to_not be_invalid
 
       foo = Foo.new id: 1, number: 55.5
       expect(foo.number).to eq(55.5)
-      expect(foo.valid?).to be_truthy
-      expect(foo.invalid?).to be_falsy
+      expect(foo).to be_valid
+      expect(foo).to_not be_invalid
 
       foo = Foo.new id: 1, number: '55.5'
       expect(foo.number).to eq(55.5)
-      expect(foo.valid?).to be_truthy
-      expect(foo.invalid?).to be_falsy
+      expect(foo).to be_valid
+      expect(foo).to_not be_invalid
 
       foo = Foo.new id: 1, number: 'Rafael Guerreiro'
       expect(foo.number).to be_nil
-      expect(foo.valid?).to be_falsy
-      expect(foo.invalid?).to be_truthy
+      expect(foo).to_not be_valid
+      expect(foo).to be_invalid
     end
   end
 
@@ -79,8 +79,8 @@ describe CsvModel::FieldDefinition do
       expect(foo.weight).to be_nil
       expect(foo.height).to be_nil
 
-      expect(foo.valid?).to be_truthy
-      expect(foo.invalid?).to be_falsy
+      expect(foo).to be_valid
+      expect(foo).to_not be_invalid
     end
 
     it 'properly adds validation for date fields' do
@@ -95,8 +95,8 @@ describe CsvModel::FieldDefinition do
       expect(foo.name).to eq('Rafael Guerreiro')
       expect(foo.birthday).to eq(DateTime.new(1992, 6, 9))
 
-      expect(foo.valid?).to be_truthy
-      expect(foo.invalid?).to be_falsy
+      expect(foo).to be_valid
+      expect(foo).to_not be_invalid
 
       foo = Foo.new id: 12,
                     name: 'Rafael Guerreiro',
@@ -105,8 +105,8 @@ describe CsvModel::FieldDefinition do
       expect(foo.name).to eq('Rafael Guerreiro')
       expect(foo.birthday).to eq(DateTime.new(1992, 6, 9))
 
-      expect(foo.valid?).to be_truthy
-      expect(foo.invalid?).to be_falsy
+      expect(foo).to be_valid
+      expect(foo).to_not be_invalid
     end
   end
 

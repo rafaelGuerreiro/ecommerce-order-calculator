@@ -6,10 +6,12 @@ require 'active_support/core_ext/object/blank'
 
 require_relative '../app/application'
 
-require_relative 'helper/stub_csv_file'
+require_all 'spec/helper/**/*'
+require_all 'spec/matcher/**/*'
 
 RSpec.configure do |config|
   config.include CsvFileHelper
+  config.include CustomMatcher
 
   config.expect_with :rspec do |expectations|
     # This option will default to `true` in RSpec 4. It makes the `description`

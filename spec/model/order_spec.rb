@@ -82,7 +82,7 @@ describe Order, :model do
       obj = Order.new(id: 16)
 
       expect(obj.id).to eq(16)
-      expect(obj.valid?).to be_truthy
+      expect(obj).to be_valid
       expect(obj.coupon_id).to be_nil
       expect(obj.coupon).to be_nil
     end
