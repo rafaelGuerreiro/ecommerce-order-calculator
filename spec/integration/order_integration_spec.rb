@@ -187,4 +187,45 @@ describe Order, :integration do
 
     expect(order.coupon.usage_limit).to eq(0)
   end
+
+  it 'has 1 product and a coupon based on OrderProduct model for order 1000' do
+    order = Order.find(1000)
+
+    expect(order.products).to have(1).product
+    expect(order.products.map(&:value))
+      .to contain_exactly(150)
+
+    expect(order.coupon_id).to eq(987)
+    expect(order.coupon).to_not be_nil
+    expect(order.coupon.value).to eq(150)
+    expect(order.coupon.discount_type).to eq(:absolute)
+    expect(order.coupon.usage_limit).to eq(1)
+
+    expect(order.coupon.expired?).to be_falsy
+
+    expect(order.total).to eq(150)
+    expect(order.total_with_discount).to eq(0)
+
+    expect(order.coupon.usage_limit).to eq(0)
+  end
+
+  it 'has 0 products and a coupon based on OrderProduct model for order 1001' do
+    order = Order.find(1001)
+
+    expect(order.products).to have(0).products
+    expect(order.products).to be_empty
+
+    expect(order.coupon_id).to eq(123)
+    expect(order.coupon).to_not be_nil
+    expect(order.coupon.value).to eq(25)
+    expect(order.coupon.discount_type).to eq(:absolute)
+    expect(order.coupon.usage_limit).to eq(1)
+
+    expect(order.coupon.expired?).to be_falsy
+
+    expect(order.total).to eq(0)
+    expect(order.total_with_discount).to eq(0)
+
+    expect(order.coupon.usage_limit).to eq(1)
+  end
 end
