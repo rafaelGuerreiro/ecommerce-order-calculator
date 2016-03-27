@@ -152,4 +152,39 @@ describe Order, :integration do
 
     expect(order.coupon.usage_limit).to eq(1)
   end
+
+  it 'has 4 products and a coupon based on OrderProduct model for order 890' do
+    order = Order.find(890)
+
+    expect(order.products).to have(4).products
+    expect(order.products.map(&:value))
+      .to contain_exactly(80, 120, 75, 100)
+
+    expect(order.coupon_id).to eq(890)
+    expect(order.coupon).to be_nil
+
+    expect(order.total).to eq(375)
+    expect(order.total_with_discount).to eq(300)
+  end
+
+  it 'has 1 product and a coupon based on OrderProduct model for order 987' do
+    order = Order.find(987)
+
+    expect(order.products).to have(1).product
+    expect(order.products.map(&:value))
+      .to contain_exactly(150)
+
+    expect(order.coupon_id).to eq(678)
+    expect(order.coupon).to_not be_nil
+    expect(order.coupon.value).to eq(200)
+    expect(order.coupon.discount_type).to eq(:absolute)
+    expect(order.coupon.usage_limit).to eq(0)
+
+    expect(order.coupon.expired?).to be_truthy
+
+    expect(order.total).to eq(150)
+    expect(order.total_with_discount).to eq(150)
+
+    expect(order.coupon.usage_limit).to eq(0)
+  end
 end
