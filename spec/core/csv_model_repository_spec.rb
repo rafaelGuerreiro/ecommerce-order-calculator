@@ -1,8 +1,6 @@
 describe CsvModelRepository do
   before do
     stub_const 'Foo', Class.new(CsvModel::Base)
-
-    CsvModelRepository.destroy!
   end
 
   describe '.persist' do

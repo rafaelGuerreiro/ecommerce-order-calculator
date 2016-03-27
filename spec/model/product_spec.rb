@@ -1,8 +1,4 @@
 describe Product, :model do
-  before do
-    CsvModelRepository.destroy!
-  end
-
   describe '.fields' do
     it 'returns the header used for parsing the csv' do
       fields = Product.fields

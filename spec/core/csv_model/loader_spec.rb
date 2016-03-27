@@ -1,7 +1,5 @@
 describe CsvModel::Loader do
   before do
-    CsvModelRepository.destroy!
-
     stub_const 'Product', Class.new(CsvModel::Base)
 
     Product.class_eval do

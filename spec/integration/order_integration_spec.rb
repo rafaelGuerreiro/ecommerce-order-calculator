@@ -1,7 +1,5 @@
 describe Order, :integration do
   before do
-    CsvModelRepository.destroy!
-
     csvs = [{
       model: Order,
       file_path: 'orders'

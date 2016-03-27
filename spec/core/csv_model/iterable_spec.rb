@@ -2,8 +2,6 @@ describe CsvModel::Iterable do
   before do
     stub_const 'Person', Class.new(CsvModel::Base)
 
-    CsvModelRepository.destroy!
-
     Person.class_eval do
       define_id_field
       define_field :name

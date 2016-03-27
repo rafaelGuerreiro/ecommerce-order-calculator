@@ -13,6 +13,10 @@ RSpec.configure do |config|
   config.include CsvFileHelper
   config.include CustomMatcher
 
+  config.before(:each) do
+    CsvModelRepository.destroy!
+  end
+
   config.expect_with :rspec do |expectations|
     # This option will default to `true` in RSpec 4. It makes the `description`
     # and `failure_message` of custom matchers include text for helper methods
