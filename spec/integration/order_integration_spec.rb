@@ -147,8 +147,8 @@ describe Order, :integration do
 
     expect(order.coupon.expired?).to be_falsy
 
-    expect(order.total).to eq(17800)
-    expect(order.total_with_discount).to eq(13350)
+    expect(order.total).to eq(17_800)
+    expect(order.total_with_discount).to eq(13_350)
 
     expect(order.coupon.usage_limit).to eq(1)
   end
