@@ -32,4 +32,34 @@ describe CsvModel::Base do
       expect(obj.valid?).to be_falsy
     end
   end
+
+  describe '#invalid?' do
+    it 'class must respond to :id' do
+      expect(Foo.new.invalid?).to be_truthy
+      Foo.class_eval do
+        def id
+          1
+        end
+      end
+
+      expect(Foo.new.invalid?).to be_falsy
+    end
+
+    it 'iterates over all validable fields to validate the object' do
+      Foo.class_eval do
+        define_id_field
+        define_field :name
+        define_field :age, type: :numeric, presence: false
+      end
+
+      bob = Foo.new id: 12, name: 'Bob'
+      expect(bob.invalid?).to be_falsy
+
+      anna = Foo.new name: 'Anna', age: 25
+      expect(anna.invalid?).to be_truthy
+
+      obj = Foo.new id: 3, name: '', age: 20
+      expect(obj.invalid?).to be_truthy
+    end
+  end
 end
