@@ -1,5 +1,3 @@
-require 'byebug'
-
 describe Order, :integration do
   before do
     [
