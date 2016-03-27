@@ -8,13 +8,16 @@ class Application
 
   def initialize(paths,
                  models = [Coupon, Product, Order, OrderProduct, :result])
-    paths = paths.map do |file_path|
-      unless file_path.start_with? '/'
-        file_path = File.expand_path(File.join('..', '..', file_path), __FILE__)
-      end
+    paths = [] unless paths.is_a?(Array)
+    models = [] unless models.is_a?(Array)
 
-      file_path
+    if paths.size != models.size
+      raise ArgumentError, "You have to provide #{models.size} paths for the " \
+        "program be able to continue.\nThe order of models being used is: " \
+        "#{models}"
     end
+
+    paths = normalize_paths(paths)
 
     @files = Hash[*models.zip(paths).flatten]
   end
@@ -34,5 +37,17 @@ class Application
     end
 
     yield @files[:result] if block_given?
+  end
+
+  private
+
+  def normalize_paths(paths)
+    paths.map do |file_path|
+      unless file_path.start_with? '/'
+        file_path = File.expand_path(File.join('..', '..', file_path), __FILE__)
+      end
+
+      file_path
+    end
   end
 end

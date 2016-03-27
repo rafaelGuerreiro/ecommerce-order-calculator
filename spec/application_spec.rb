@@ -1,5 +1,3 @@
-require 'byebug'
-
 describe Application do
   describe '.new' do
     it 'merges the paths with the models and build a hash' do
@@ -63,6 +61,30 @@ describe Application do
         :result => '/tmp/result.csv'
       )
     end
+
+    it 'creates an empty fields when invalid value is passed ' \
+      'for both arguments' do
+      app = Application.new(nil, nil)
+      expect(app.files.empty?).to be_truthy
+
+      app = Application.new('not an array', 123)
+      expect(app.files.empty?).to be_truthy
+    end
+
+    it 'validates the length of the paths with the models' do
+      expect do
+        Application.new(
+          [
+            '/tmp/coupons.csv',
+            '/tmp/products.csv',
+            '/tmp/orders.csv',
+            '/tmp/order_items.csv'
+          ]
+        )
+      end.to raise_error(ArgumentError, 'You have to provide 5 paths for the ' \
+        "program be able to continue.\nThe order of models being used is: " \
+        '[Coupon, Product, Order, OrderProduct, :result]')
+    end
   end
 
   describe '#load_models' do
@@ -104,7 +126,7 @@ describe Application do
 
     it "ignores anything that isn't subclass of CsvModel::Base" do
       app = Application.new(
-        ['/a', '/b'],
+        ['/a', '/b', '/c'],
         [String, :result, CsvModel::Base]
       )
 
@@ -115,9 +137,6 @@ describe Application do
         end
       end.to_not raise_error
     end
-  end
-
-  describe '#serialize_result' do
   end
 
   private

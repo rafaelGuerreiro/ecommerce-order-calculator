@@ -1,5 +1,4 @@
 module CsvFileHelper
-  # def stub_csv_file(file_path, csv_data)
   def stub_csv_file(*configurations)
     allow_call_original(CSV => :read, File => :exist?)
 
