@@ -26,7 +26,7 @@ class CsvModelRepository
 
     def exist?(model)
       if model.is_a?(Class)
-        return model < CsvModel::Base && @repository.key?(model)
+        return @repository && model < CsvModel::Base && @repository.key?(model)
       end
 
       return false unless model.is_a?(CsvModel::Base)

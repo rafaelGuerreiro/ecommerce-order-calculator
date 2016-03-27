@@ -10,7 +10,9 @@ class CsvGenerator
   def dump_csv(&block)
     return if @file.invalid?
 
-    FileUtils.makedirs @file.enclosing_folder
+    unless File.directory? @file.enclosing_folder
+      FileUtils.makedirs @file.enclosing_folder
+    end
 
     CSV.open(@file.file_path, 'w') do |csv|
       populate_csv(csv, &block)
