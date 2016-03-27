@@ -1,5 +1,7 @@
 describe CsvGenerator do
   before do
+    stub_const 'Person', Class.new(CsvModel::Base)
+
     Coupon.create(
       coupon_hash('1', '10', 'absolute', '2015/12/31', '2'),
       coupon_hash('2', '15', 'percent', '2020/12/31', '1'),
@@ -48,6 +50,44 @@ describe CsvGenerator do
         [4, 'this coupon is percent'],
         [5, 'this coupon is absolute']
       )
+    end
+
+    it 'automatically converts date to %Y/%m/%d pattern' do
+      Person.class_eval do
+        define_id_field
+        define_field :name
+        define_field :birthday, type: :date
+      end
+
+      Person.create(id: 1,
+                    name: 'Rafael Guerreiro',
+                    birthday: Date.new(1992, 6, 9)
+                   )
+
+      target = csv_writing_target
+
+      CsvGenerator.new(Person, 'tmp/result.csv').dump_csv
+
+      expect(target).to contain_exactly(['1', 'Rafael Guerreiro', '1992/06/09'])
+    end
+
+    it 'automatically considers the id when field is a CsvModel::Base' do
+      Person.class_eval do
+        define_id_field
+        define_field :name
+        define_field :coupon, references: Coupon
+      end
+
+      person = Person.create(id: 1, name: 'Rafael Guerreiro', coupon: 2)
+
+      expect(person.coupon).to_not be_nil
+      expect(person.coupon.discount_type).to eq(:percent)
+
+      target = csv_writing_target
+
+      CsvGenerator.new(Person, 'tmp/result.csv').dump_csv
+
+      expect(target).to contain_exactly(['1', 'Rafael Guerreiro', '2'])
     end
   end
 
