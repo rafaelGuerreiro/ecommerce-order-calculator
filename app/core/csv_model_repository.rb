@@ -18,7 +18,7 @@ class CsvModelRepository
     end
 
     def find(clazz, id)
-      return unless clazz < CsvModel::Base && id.present?
+      return unless @repository && clazz < CsvModel::Base && id.present?
 
       hash = @repository[clazz]
       hash[id] if hash

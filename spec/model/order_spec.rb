@@ -33,7 +33,7 @@ describe Order, :model do
       Coupon.create id: 15,
                     value: 20,
                     discount_type: :percent,
-                    expiration: Date.new + 1,
+                    expiration: Date.today + 1,
                     usage_limit: 1
 
       obj = Order.new(id: 12, coupon: 15)
@@ -66,7 +66,7 @@ describe Order, :model do
       Coupon.create id: 125,
                     value: 15,
                     discount_type: :absolute,
-                    expiration: Date.new - 1,
+                    expiration: Date.today - 1,
                     usage_limit: 0
 
       expect(obj.coupon).to_not be_nil
@@ -107,7 +107,7 @@ describe Order, :model do
       Coupon.create id: 12,
                     value: 10,
                     discount_type: :percent,
-                    expiration: Date.new + 1,
+                    expiration: Date.today + 1,
                     usage_limit: 1
 
       obj = Order.new(id: 16, coupon: 12)
@@ -147,7 +147,7 @@ describe Order, :model do
       coupon = Coupon.create id: 12,
                              value: 40,
                              discount_type: :absolute,
-                             expiration: Date.new + 1,
+                             expiration: Date.today + 1,
                              usage_limit: 1
 
       create_products order: 17, values: [12.5, 50, 75, 10, 15.5]
@@ -166,7 +166,7 @@ describe Order, :model do
       coupon = Coupon.create id: 12,
                              value: 0.01,
                              discount_type: :absolute,
-                             expiration: Date.new + 1,
+                             expiration: Date.today + 1,
                              usage_limit: 1
 
       create_product order: 17, product: 1, value: 100
@@ -186,7 +186,7 @@ describe Order, :model do
       coupon = Coupon.create id: 12,
                              value: 39.99,
                              discount_type: :percent,
-                             expiration: Date.new + 1,
+                             expiration: Date.today + 1,
                              usage_limit: 1
 
       create_products order: 17,
@@ -210,7 +210,7 @@ describe Order, :model do
       coupon = Coupon.create id: 12,
                              value: 60,
                              discount_type: :percent,
-                             expiration: Date.new + 1,
+                             expiration: Date.today + 1,
                              usage_limit: 1
 
       create_products order: 17,
@@ -233,7 +233,7 @@ describe Order, :model do
       coupon = Coupon.create id: 12,
                              value: 600,
                              discount_type: :absolute,
-                             expiration: Date.new + 1,
+                             expiration: Date.today + 1,
                              usage_limit: 1
 
       create_products order: 17,
@@ -256,7 +256,7 @@ describe Order, :model do
       coupon = Coupon.create id: 12,
                              value: 30,
                              discount_type: :percent,
-                             expiration: Date.new + 1,
+                             expiration: Date.today + 1,
                              usage_limit: 1
 
       create_products order: 17, values: [12.5, 50, 75, 10, 15.5]

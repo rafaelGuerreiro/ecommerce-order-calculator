@@ -8,7 +8,7 @@ class Coupon < CsvModel::Base
   def expired?
     return false if invalid?
 
-    Date.new > @expiration || @usage_limit < 1
+    @expiration < Date.today || @usage_limit < 1
   end
 
   def active?

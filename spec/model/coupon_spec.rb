@@ -39,7 +39,7 @@ describe Coupon, :model do
       coupon = Coupon.new id: 12,
                           value: 15,
                           discount_type: :absolute,
-                          expiration: Date.new - 1,
+                          expiration: Date.today - 1,
                           usage_limit: 2
 
       expect(coupon.expired?).to be_truthy
@@ -50,7 +50,7 @@ describe Coupon, :model do
       coupon = Coupon.new id: 12,
                           value: 15,
                           discount_type: :absolute,
-                          expiration: Date.new + 1,
+                          expiration: Date.today + 1,
                           usage_limit: 0
 
       expect(coupon.expired?).to be_truthy
@@ -86,7 +86,7 @@ describe Coupon, :model do
       coupon = Coupon.new id: 12,
                           value: 15,
                           discount_type: :absolute,
-                          expiration: Date.new + 1,
+                          expiration: Date.today + 1,
                           usage_limit: 2
 
       expect(coupon.absolute?).to be_truthy
@@ -97,7 +97,7 @@ describe Coupon, :model do
       coupon = Coupon.new id: 12,
                           value: 15,
                           discount_type: :percent,
-                          expiration: Date.new + 1,
+                          expiration: Date.today + 1,
                           usage_limit: 2
 
       expect(coupon.absolute?).to be_falsy
@@ -108,7 +108,7 @@ describe Coupon, :model do
       coupon = Coupon.new id: 12,
                           value: 15,
                           discount_type: :abs,
-                          expiration: Date.new + 1,
+                          expiration: Date.today + 1,
                           usage_limit: 2
 
       expect(coupon.absolute?).to be_falsy
@@ -121,7 +121,7 @@ describe Coupon, :model do
       coupon = Coupon.new id: 'aa',
                           value: 15,
                           discount_type: :percent,
-                          expiration: Date.new + 1,
+                          expiration: Date.today + 1,
                           usage_limit: 2
 
       expect(coupon.calculate_discount(10)).to eq(0)
@@ -132,7 +132,7 @@ describe Coupon, :model do
       coupon = Coupon.new id: 12,
                           value: 15,
                           discount_type: :percent,
-                          expiration: Date.new - 1,
+                          expiration: Date.today - 1,
                           usage_limit: 2
 
       expect(coupon.calculate_discount(10)).to eq(0)
@@ -142,7 +142,7 @@ describe Coupon, :model do
       coupon = Coupon.new id: 12,
                           value: 15,
                           discount_type: :percent,
-                          expiration: Date.new + 1,
+                          expiration: Date.today + 1,
                           usage_limit: 0
 
       expect(coupon.calculate_discount(10)).to eq(0)
@@ -154,7 +154,7 @@ describe Coupon, :model do
       coupon = Coupon.new id: 12,
                           value: 20,
                           discount_type: :percent,
-                          expiration: Date.new + 1,
+                          expiration: Date.today + 1,
                           usage_limit: 1
 
       expect(coupon.calculate_discount(60)).to eq(12)
@@ -164,7 +164,7 @@ describe Coupon, :model do
       coupon = Coupon.new id: 12,
                           value: 50,
                           discount_type: :absolute,
-                          expiration: Date.new + 1,
+                          expiration: Date.today + 1,
                           usage_limit: 1
 
       expect(coupon.calculate_discount(90)).to eq(50)
@@ -174,7 +174,7 @@ describe Coupon, :model do
       coupon = Coupon.new id: 12,
                           value: 100,
                           discount_type: :absolute,
-                          expiration: Date.new + 1,
+                          expiration: Date.today + 1,
                           usage_limit: 1
 
       expect(coupon.calculate_discount(90)).to eq(90)
@@ -182,7 +182,7 @@ describe Coupon, :model do
       coupon = Coupon.new id: 12,
                           value: 200,
                           discount_type: :percent,
-                          expiration: Date.new + 1,
+                          expiration: Date.today + 1,
                           usage_limit: 1
 
       expect(coupon.calculate_discount(900)).to eq(900)
@@ -194,7 +194,7 @@ describe Coupon, :model do
       coupon = Coupon.new id: 12,
                           value: 200,
                           discount_type: :percent,
-                          expiration: Date.new + 1,
+                          expiration: Date.today + 1,
                           usage_limit: 1
 
       expect(coupon.expired?).to be_falsy
@@ -208,7 +208,7 @@ describe Coupon, :model do
       coupon = Coupon.new id: 12,
                           value: 200,
                           discount_type: :percentage,
-                          expiration: Date.new + 1,
+                          expiration: Date.today + 1,
                           usage_limit: 1
 
       expect(coupon).to_not be_valid
@@ -221,7 +221,7 @@ describe Coupon, :model do
       coupon = Coupon.new id: 12,
                           value: 200,
                           discount_type: :percent,
-                          expiration: Date.new + 1,
+                          expiration: Date.today + 1,
                           usage_limit: 0
 
       expect(coupon).to be_valid

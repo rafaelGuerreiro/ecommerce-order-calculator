@@ -1,9 +1,8 @@
-describe CsvModel::FieldDefinition::Argument do
+describe CsvModel::FieldDefinition::Reference do
   before do
-    stub_const 'Foo', Class.new # (CsvModel::Base)
+    stub_const 'Foo', Class.new
     stub_const 'Bar', Class.new(CsvModel::Base)
 
-    # Foo.class_eval { define_id_field }
     Bar.class_eval { define_id_field }
   end
 
