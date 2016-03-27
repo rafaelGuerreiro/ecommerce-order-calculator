@@ -90,7 +90,7 @@ describe Order, :integration do
     expect(order.coupon.usage_limit).to eq(1)
   end
 
-  it 'has 2 products and a coupon based on OrderProduct model for order 567' do
+  it 'has 6 products and a coupon based on OrderProduct model for order 567' do
     order = Order.find(567)
 
     expect(order.products).to have(6).products
@@ -109,5 +109,47 @@ describe Order, :integration do
     expect(order.total_with_discount).to eq(525)
 
     expect(order.coupon.usage_limit).to eq(2)
+  end
+
+  it 'has 2 products and a coupon based on OrderProduct model for order 678' do
+    order = Order.find(678)
+
+    expect(order.products).to have(2).products
+    expect(order.products.map(&:value))
+      .to contain_exactly(2_400, 75)
+
+    expect(order.coupon_id).to eq(567)
+    expect(order.coupon).to_not be_nil
+    expect(order.coupon.value).to eq(100)
+    expect(order.coupon.discount_type).to eq(:absolute)
+    expect(order.coupon.usage_limit).to eq(1)
+
+    expect(order.coupon.expired?).to be_falsy
+
+    expect(order.total).to eq(2475)
+    expect(order.total_with_discount).to eq(2227.5)
+
+    expect(order.coupon.usage_limit).to eq(1)
+  end
+
+  it 'has 5 products and a coupon based on OrderProduct model for order 789' do
+    order = Order.find(789)
+
+    expect(order.products).to have(5).products
+    expect(order.products.map(&:value))
+      .to contain_exactly(15_000, 150, 175, 2_400, 75)
+
+    expect(order.coupon_id).to eq(789)
+    expect(order.coupon).to_not be_nil
+    expect(order.coupon.value).to eq(20)
+    expect(order.coupon.discount_type).to eq(:percent)
+    expect(order.coupon.usage_limit).to eq(1)
+
+    expect(order.coupon.expired?).to be_falsy
+
+    expect(order.total).to eq(17800)
+    expect(order.total_with_discount).to eq(13350)
+
+    expect(order.coupon.usage_limit).to eq(1)
   end
 end
