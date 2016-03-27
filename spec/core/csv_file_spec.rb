@@ -58,22 +58,40 @@ describe CsvFile do
     end
   end
 
-  describe '#path' do
+  describe '#enclosing_folder' do
     it 'returns the file enclosing folder' do
       file = CsvFile.new(Foo, '../folder/a.file.csv')
-      expect(file.path).to eq('../folder')
+      expect(file.enclosing_folder).to eq('../folder')
     end
 
     it 'returns nil when the file is invalid' do
       file = CsvFile.new(nil, '../folder/a.file.csv')
 
       expect(file).to be_invalid
-      expect(file.path).to be_nil
+      expect(file.enclosing_folder).to be_nil
     end
 
     it 'replaces backslashes to slashes' do
       file = CsvFile.new(Foo, '..\\folder\\a.file.csv')
-      expect(file.path).to eq('../folder')
+      expect(file.enclosing_folder).to eq('../folder')
+    end
+  end
+
+  describe '.enclosing_folder_for' do
+    it 'returns the file enclosing folder' do
+      expect(CsvFile.enclosing_folder_for('../folder/a.file.csv'))
+        .to eq('../folder')
+    end
+
+    it 'returns nil when the file is blank' do
+      expect(CsvFile.enclosing_folder_for(nil)).to be_nil
+      expect(CsvFile.enclosing_folder_for('')).to be_nil
+      expect(CsvFile.enclosing_folder_for(' ')).to be_nil
+    end
+
+    it 'replaces backslashes to slashes' do
+      expect(CsvFile.enclosing_folder_for('..\\folder\\a.file.csv'))
+        .to eq('../folder')
     end
   end
 

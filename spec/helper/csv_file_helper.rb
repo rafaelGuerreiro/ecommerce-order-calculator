@@ -7,11 +7,12 @@ module CsvFileHelper
       .and_return(csv_data.map { |row| row.split(',') })
   end
 
-  def stub_csv_writing_target(target = [])
+  def stub_csv_writing_target(file_path, target = [])
     allow_call_original(CSV => :open, FileUtils => :makedirs)
 
-    allow(CSV).to receive(:open).with('tmp/result.csv', 'w').and_yield(target)
-    allow(FileUtils).to receive(:makedirs).with('tmp').and_return(nil)
+    allow(CSV).to receive(:open).with(file_path, 'w').and_yield(target)
+    allow(FileUtils).to receive(:makedirs)
+      .with(CsvFile.enclosing_folder_for(file_path)).and_return(nil)
 
     target
   end

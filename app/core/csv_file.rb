@@ -13,6 +13,10 @@ class CsvFile
     @model = model if model.is_a?(Class) && model < CsvModel::Base
   end
 
+  def self.enclosing_folder_for(file)
+    file.tr('\\', '/').gsub(%r{/[^/]*\.csv\z}, '') if file.present?
+  end
+
   def valid?
     file_path.present? && @model.present?
   end
@@ -31,9 +35,9 @@ class CsvFile
     @model.fields.map(&:name)
   end
 
-  def path
+  def enclosing_folder
     return if invalid?
 
-    @file_path.tr('\\', '/').gsub(%r{/[^/]*\.csv\z}, '')
+    self.class.enclosing_folder_for(@file_path)
   end
 end

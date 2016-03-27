@@ -13,7 +13,7 @@ describe CsvGenerator do
 
   describe '#dump_csv' do
     it 'does nothing when csv file is invalid' do
-      target = stub_csv_writing_target
+      target = stub_csv_writing_target 'tmp/result.csv'
 
       CsvGenerator.new(Coupon, nil).dump_csv
       expect(target).to be_empty
@@ -23,7 +23,7 @@ describe CsvGenerator do
     end
 
     it 'defaults converting every field to string when no block is given' do
-      target = stub_csv_writing_target
+      target = stub_csv_writing_target 'tmp/result.csv'
 
       CsvGenerator.new(Coupon, 'tmp/result.csv').dump_csv
 
@@ -37,7 +37,7 @@ describe CsvGenerator do
     end
 
     it 'considers the array returned in the block when a block is given' do
-      target = stub_csv_writing_target
+      target = stub_csv_writing_target 'tmp/result.csv'
 
       CsvGenerator.new(Coupon, 'tmp/result.csv').dump_csv do |coupon|
         [coupon.id, "this coupon is #{coupon.discount_type}"]
@@ -64,7 +64,7 @@ describe CsvGenerator do
                     birthday: Date.new(1992, 6, 9)
                    )
 
-      target = stub_csv_writing_target
+      target = stub_csv_writing_target 'tmp/result.csv'
 
       CsvGenerator.new(Person, 'tmp/result.csv').dump_csv
 
@@ -83,7 +83,7 @@ describe CsvGenerator do
       expect(person.coupon).to_not be_nil
       expect(person.coupon.discount_type).to eq(:percent)
 
-      target = stub_csv_writing_target
+      target = stub_csv_writing_target 'tmp/result.csv'
 
       CsvGenerator.new(Person, 'tmp/result.csv').dump_csv
 
