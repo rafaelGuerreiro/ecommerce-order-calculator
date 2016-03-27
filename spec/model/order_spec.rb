@@ -22,7 +22,7 @@ describe Order, :model do
         ',', ' , ', ','
       ]
       file_path = 'orders.csv'
-      stub_csv_file file_path, csv_data.join("\n")
+      stub_csv_file file_path, csv_data
     end
 
     it 'loads all valid orders' do

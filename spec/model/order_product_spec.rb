@@ -25,7 +25,7 @@ describe OrderProduct, :model do
         '678,890'
       ]
       file_path = 'order_products.csv'
-      stub_csv_file file_path, csv_data.join("\n")
+      stub_csv_file file_path, csv_data
     end
 
     it 'loads all valid order_products' do

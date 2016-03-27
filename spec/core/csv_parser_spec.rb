@@ -37,7 +37,7 @@ describe CsvParser do
       ]
       file_path = 'a_csv_file.csv'
 
-      stub_csv_file file_path, csv_data.join("\n")
+      stub_csv_file file_path, csv_data
 
       Foo.class_eval do
         define_id_field
@@ -46,7 +46,7 @@ describe CsvParser do
 
       models = CsvParser.new(Foo, file_path).parse_csv
 
-      expect(models).to have(4).objects
+      expect(models).to have(5).objects
 
       valid = models.select(&:valid?)
       invalid = models.select(&:invalid?)
@@ -54,8 +54,8 @@ describe CsvParser do
       expect(valid.map(&:name)).to contain_exactly('a name', 'another name')
       expect(valid.count).to eq(2)
 
-      expect(invalid.map(&:name)).to contain_exactly(nil, ' ')
-      expect(invalid.count).to eq(2)
+      expect(invalid.map(&:name)).to contain_exactly(nil, ' ', nil)
+      expect(invalid.count).to eq(3)
     end
 
     it 'successfully parses when model has id and a date field' do
@@ -72,7 +72,7 @@ describe CsvParser do
       ]
       file_path = 'another_csv_file.csv'
 
-      stub_csv_file file_path, csv_data.join("\n")
+      stub_csv_file file_path, csv_data
 
       Foo.class_eval do
         define_id_field
@@ -81,7 +81,7 @@ describe CsvParser do
 
       models = CsvParser.new(Foo, file_path).parse_csv
 
-      expect(models).to have(8).objects
+      expect(models).to have(9).objects
 
       valid = models.select(&:valid?)
       invalid = models.select(&:invalid?)
@@ -92,7 +92,7 @@ describe CsvParser do
 
       expect(invalid.map(&:id).uniq).to contain_exactly(1, nil, 3)
       expect(invalid.map(&:issued_at).uniq).to contain_exactly(nil)
-      expect(invalid.count).to eq(7)
+      expect(invalid.count).to eq(8)
     end
   end
 end

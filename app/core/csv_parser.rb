@@ -13,8 +13,8 @@ class CsvParser
     return [] if header.blank? || !@file.csv_exists?
 
     models = []
-    CSV.read(@file.file_path).each do |fields|
-      models << @file.model.new(to_hash(header, fields))
+    CSV.read(@file.file_path).each do |row|
+      models << @file.model.new(to_hash(header, row))
     end
 
     models

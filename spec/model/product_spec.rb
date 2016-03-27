@@ -22,7 +22,7 @@ describe Product, :model do
         '876,120.0', ',', '123,', ',', ',', ','
       ]
       file_path = 'products.csv'
-      stub_csv_file file_path, csv_data.join("\n")
+      stub_csv_file file_path, csv_data
     end
 
     it 'loads all valid products' do

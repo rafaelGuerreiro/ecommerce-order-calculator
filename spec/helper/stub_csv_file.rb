@@ -3,15 +3,14 @@ module CsvFileHelper
     allow_call_original
 
     allow(File).to receive(:exist?).with(file_path).and_return(true)
-    allow(File).to receive(:open)
-      .with(file_path, universal_newline: false)
-      .and_return(StringIO.new(csv_data))
+    stub = allow(CSV).to receive(:read).with(file_path)
+      .and_return(csv_data.map { |row| row.split(',') })
   end
 
   private
 
   def allow_call_original
     allow(File).to receive(:exist?).and_call_original
-    allow(File).to receive(:open).and_call_original
+    allow(CSV).to receive(:read).and_call_original
   end
 end
