@@ -13,7 +13,7 @@ describe CsvGenerator do
 
   describe '#dump_csv' do
     it 'does nothing when csv file is invalid' do
-      target = csv_writing_target
+      target = stub_csv_writing_target
 
       CsvGenerator.new(Coupon, nil).dump_csv
       expect(target).to be_empty
@@ -23,7 +23,7 @@ describe CsvGenerator do
     end
 
     it 'defaults converting every field to string when no block is given' do
-      target = csv_writing_target
+      target = stub_csv_writing_target
 
       CsvGenerator.new(Coupon, 'tmp/result.csv').dump_csv
 
@@ -37,7 +37,7 @@ describe CsvGenerator do
     end
 
     it 'considers the array returned in the block when a block is given' do
-      target = csv_writing_target
+      target = stub_csv_writing_target
 
       CsvGenerator.new(Coupon, 'tmp/result.csv').dump_csv do |coupon|
         [coupon.id, "this coupon is #{coupon.discount_type}"]
@@ -64,7 +64,7 @@ describe CsvGenerator do
                     birthday: Date.new(1992, 6, 9)
                    )
 
-      target = csv_writing_target
+      target = stub_csv_writing_target
 
       CsvGenerator.new(Person, 'tmp/result.csv').dump_csv
 
@@ -83,7 +83,7 @@ describe CsvGenerator do
       expect(person.coupon).to_not be_nil
       expect(person.coupon.discount_type).to eq(:percent)
 
-      target = csv_writing_target
+      target = stub_csv_writing_target
 
       CsvGenerator.new(Person, 'tmp/result.csv').dump_csv
 
@@ -101,17 +101,5 @@ describe CsvGenerator do
       expiration: expiration,
       usage_limit: usage_limit
     }
-  end
-
-  def csv_writing_target(target = [])
-    allow(CSV).to receive(:open).with('tmp/result.csv', 'w').and_yield(target)
-    allow(FileUtils).to receive(:makedirs).with('tmp').and_return(nil)
-
-    target
-  end
-
-  def stub_call_original
-    allow(CSV).to receive(:open).and_call_original
-    allow(FileUtils).to receive(:makedirs).and_call_original
   end
 end
