@@ -4,9 +4,10 @@ require 'require_all'
 require_all 'app/**/*.rb'
 
 class Application
-  def initialize(paths)
-    models = [Coupon, Product, Order, OrderProduct, :result]
+  attr_reader :files
 
+  def initialize(paths,
+                 models = [Coupon, Product, Order, OrderProduct, :result])
     paths = paths.map do |file_path|
       unless file_path.start_with? '/'
         file_path = File.expand_path(File.join('..', '..', file_path), __FILE__)
